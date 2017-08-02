@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import { Navbar } from 'react-bootstrap';
+import Routes from './Routes';
 import './App.css';
 
 class App extends Component {
@@ -15,6 +16,7 @@ class App extends Component {
             <Navbar.Toggle />
           </Navbar.Header>
         </Navbar>
+      <Routes />
       </div>
     );
   }
