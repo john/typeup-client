@@ -8,6 +8,7 @@ import {
   NavItem,
   Navbar
 } from 'react-bootstrap';
+import AWS from 'aws-sdk';
 import Routes from './Routes';
 import RouteNavItem from './components/RouteNavItem';
 import { CognitoUserPool, } from 'amazon-cognito-identity-js';
@@ -81,7 +82,11 @@ class App extends Component {
     if (currentUser !== null) {
       currentUser.signOut();
     }
-
+    
+    if (AWS.config.credentials) {
+      AWS.config.credentials.clearCachedId();
+    }
+    
     this.updateUserToken(null);
     this.props.history.push('/login');
   }
