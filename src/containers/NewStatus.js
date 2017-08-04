@@ -4,6 +4,8 @@ import { invokeApig, s3Upload } from '../libs/awsLib';
 import {
   FormGroup,
   FormControl,
+  ToggleButtonGroup,
+  ToggleButton,
   ControlLabel,
 } from 'react-bootstrap';
 import LoaderButton from '../components/LoaderButton';
@@ -18,12 +20,14 @@ class NewStatus extends Component {
 
     this.state = {
       isLoading: null,
+      title: '',
+      blocked: '',
       content: '',
     };
   }
 
   validateForm() {
-    return this.state.content.length > 0;
+    return this.state.title.length > 0;
   }
 
   handleChange = (event) => {
@@ -52,6 +56,7 @@ class NewStatus extends Component {
         : null;
 
       await this.createStatus({
+        title: this.state.title,
         content: this.state.content,
         attachment: uploadedFilename,
       });
@@ -78,7 +83,24 @@ class NewStatus extends Component {
     return (
       <div className="NewStatus">
         <form onSubmit={this.handleSubmit}>
+          <FormGroup controlId="title">
+            Headline:
+            <FormControl
+              onChange={this.handleChange}
+              value={this.state.title}
+              componentClass="text" />
+          </FormGroup>
+              Blocked?&nbsp;&nbsp;&nbsp; 
+          <ToggleButtonGroup type="radio" name="blocked">
+            <ToggleButton value={0} className="blocked-button">
+              No
+            </ToggleButton>
+            <ToggleButton value={1} className="blocked-button">
+              Yes
+            </ToggleButton>
+          </ToggleButtonGroup>
           <FormGroup controlId="content">
+            Details:
             <FormControl
               onChange={this.handleChange}
               value={this.state.content}
