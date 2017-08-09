@@ -3,7 +3,7 @@ import sigV4Client from './sigV4Client';
 import config from '../config.js';
 
 export function getAwsCredentials(userToken) {
-  console.log('userToken in getAwsCredentials is: ' + userToken);
+  // console.log('userToken in getAwsCredentials is: ' + userToken);
   if (AWS.config.credentials && Date.now() < AWS.config.credentials.expireTime - 60000) {
     return;
   }
@@ -30,45 +30,51 @@ export async function invokeApig(
     queryParams = {},
     body }, userToken) {
 
-  console.log('userToken in invokeApig is: ' + userToken);
-  await getAwsCredentials(userToken);
-  
-  console.log('AWS.config.credentials.accessKeyId: ' + AWS.config.credentials.accessKeyId);
-  console.log('AWS.config.credentials.secretAccessKey: ' + AWS.config.credentials.secretAccessKey);
-  console.log('AWS.config.credentials.sessionToken: ' + AWS.config.credentials.sessionToken);
-  console.log('config.apiGateway.REGION,: ' + config.apiGateway.REGION,);
-  console.log('config.apiGateway.URL: ' + config.apiGateway.URL);
+  if( userToken == null) {
+    // redirect to login.
+    this.props.history.push('/login');
+  } else {
 
-  const signedRequest = sigV4Client
-    .newClient({
-      accessKey: AWS.config.credentials.accessKeyId,
-      secretKey: AWS.config.credentials.secretAccessKey,
-      sessionToken: AWS.config.credentials.sessionToken,
-      region: config.apiGateway.REGION,
-      endpoint: config.apiGateway.URL,
-    })
-    .signRequest({
+    // console.log('userToken in invokeApig is: ' + userToken);
+    await getAwsCredentials(userToken);
+
+    // console.log('AWS.config.credentials.accessKeyId: ' + AWS.config.credentials.accessKeyId);
+    // console.log('AWS.config.credentials.secretAccessKey: ' + AWS.config.credentials.secretAccessKey);
+    // console.log('AWS.config.credentials.sessionToken: ' + AWS.config.credentials.sessionToken);
+    // console.log('config.apiGateway.REGION,: ' + config.apiGateway.REGION,);
+    // console.log('config.apiGateway.URL: ' + config.apiGateway.URL);
+
+    const signedRequest = sigV4Client
+      .newClient({
+        accessKey: AWS.config.credentials.accessKeyId,
+        secretKey: AWS.config.credentials.secretAccessKey,
+        sessionToken: AWS.config.credentials.sessionToken,
+        region: config.apiGateway.REGION,
+        endpoint: config.apiGateway.URL,
+      })
+      .signRequest({
+        method,
+        path,
+        headers,
+        queryParams,
+        body
+      });
+
+    body = body ? JSON.stringify(body) : body;
+    headers = signedRequest.headers;
+
+    const results = await fetch(signedRequest.url, {
       method,
-      path,
       headers,
-      queryParams,
       body
     });
 
-  body = body ? JSON.stringify(body) : body;
-  headers = signedRequest.headers;
+    if (results.status !== 200) {
+      throw new Error(await results.text());
+    }
 
-  const results = await fetch(signedRequest.url, {
-    method,
-    headers,
-    body
-  });
-
-  if (results.status !== 200) {
-    throw new Error(await results.text());
+    return results.json();
   }
-
-  return results.json();
 }
 
 export async function s3Upload(file, userToken) {

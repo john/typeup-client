@@ -10,34 +10,40 @@ import {
 } from 'react-bootstrap';
 import LoaderButton from '../components/LoaderButton';
 import config from '../config.js';
-//import './Status.css';
+import './Status.css';
 
 class Status extends Component {
   constructor(props) {
     super(props);
 
     this.file = null;
-    
+
     this.state = {
       isLoading: null,
       isDeleting: null,
       status: null,
       title: '',
-      blocked: '',
+      userState: '',
       content: '',
     };
   }
 
   async componentDidMount() {
-    try {
-      const results = await this.getStatus();
-      this.setState({
-        status: results,
-        content: results.content,
-      });
-    }
-    catch(e) {
-      alert(e);
+    if( this.props.userToken == undefined) {
+      this.props.history.push('/login');
+    } else {
+      try {
+        const results = await this.getStatus();
+        this.setState({
+          status: results,
+          content: results.content,
+          title: results.title,
+          userState: results.userState,
+        });
+      }
+      catch(e) {
+        alert(e);
+      }
     }
   }
 
@@ -46,7 +52,7 @@ class Status extends Component {
   }
 
   validateForm() {
-    return this.state.content.length > 0;
+    return this.state.title.length > 0;
   }
 
   formatFilename(str) {
@@ -93,40 +99,47 @@ class Status extends Component {
       <div className="Status">
         { this.state.status &&
           ( <form onSubmit={this.handleSubmit}>
-            
+
+
             <FormGroup controlId="title">
-              Headline:
+              <ControlLabel>Summary</ControlLabel>
+              <FormControl
+                value={this.state.title}
+                onChange={this.handleChange}
+                componentClass="input" />
+            </FormGroup>
+
+            <div className="blocked">
+              <b>Blocked?</b>&nbsp;&nbsp;&nbsp;
+              <ToggleButtonGroup type="radio" name="userState">
+                <ToggleButton value="no" className="blocked-button">
+                  No
+                </ToggleButton>
+                <ToggleButton value="yes" className="blocked-button">
+                  Yes
+                </ToggleButton>
+              </ToggleButtonGroup>
+            </div>
+
+            <FormGroup controlId="content">
+              <ControlLabel>Description</ControlLabel>
               <FormControl
                 onChange={this.handleChange}
-                value={this.state.title}
-                componentClass="text" />
+                value={this.state.content}
+                componentClass="textarea" />
             </FormGroup>
-                Blocked?&nbsp;&nbsp;&nbsp; 
-            <ToggleButtonGroup type="radio" name="blocked">
-              <ToggleButton value={0} className="blocked-button">
-                No
-              </ToggleButton>
-              <ToggleButton value={1} className="blocked-button">
-                Yes
-              </ToggleButton>
-            </ToggleButtonGroup>
-              
-              
-              <FormGroup controlId="content">
-                <FormControl
-                  onChange={this.handleChange}
-                  value={this.state.content}
-                  componentClass="textarea" />
-              </FormGroup>
-              { this.state.status.attachment &&
-              ( <FormGroup>
-                <ControlLabel>Attachment</ControlLabel>
-                <FormControl.Static>
-                  <a target="_blank" rel="noopener noreferrer" href={ this.state.status.attachment }>
-                    { this.formatFilename(this.state.status.attachment) }
-                  </a>
-                </FormControl.Static>
-              </FormGroup> )}
+
+              { this.state.status.attachment && (
+                <FormGroup>
+                  <ControlLabel>Attachment</ControlLabel>
+                  <FormControl.Static>
+                    <a target="_blank" rel="noopener noreferrer" href={ this.state.status.attachment }>
+                      { this.formatFilename(this.state.status.attachment) }
+                    </a>
+                  </FormControl.Static>
+                </FormGroup>
+              )}
+
               <FormGroup controlId="file">
                 { ! this.state.status.attachment &&
                 <ControlLabel>Attachment</ControlLabel> }
@@ -134,6 +147,7 @@ class Status extends Component {
                   onChange={this.handleFileChange}
                   type="file" />
               </FormGroup>
+
               <LoaderButton
                 block
                 bsStyle="primary"
@@ -143,6 +157,7 @@ class Status extends Component {
                 isLoading={this.state.isLoading}
                 text="Save"
                 loadingText="Saving…" />
+
               <LoaderButton
                 block
                 bsStyle="danger"
@@ -151,6 +166,7 @@ class Status extends Component {
                 onClick={this.handleDelete}
                 text="Delete"
                 loadingText="Deleting…" />
+
             </form> )}
         </div>
       );

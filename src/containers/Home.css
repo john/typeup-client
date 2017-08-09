@@ -23,3 +23,7 @@
 .Home .statuses p {
   color: #666;
 }
+
+.pullRight {
+  float: right;
+}

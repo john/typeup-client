@@ -17,11 +17,10 @@ class NewStatus extends Component {
     super(props);
 
     this.file = null;
-
     this.state = {
       isLoading: null,
       title: '',
-      blocked: '',
+      userState: 'foo',
       content: '',
     };
   }
@@ -57,6 +56,7 @@ class NewStatus extends Component {
 
       await this.createStatus({
         title: this.state.title,
+        userState: this.state.userState,
         content: this.state.content,
         attachment: uploadedFilename,
       });
@@ -66,12 +66,9 @@ class NewStatus extends Component {
       alert(e);
       this.setState({ isLoading: false });
     }
-
   }
 
   createStatus(status) {
-    console.log('userToken in createNote is: ' + this.props.userToken);
-    
     return invokeApig({
       path: '/statuses',
       method: 'POST',
@@ -83,29 +80,36 @@ class NewStatus extends Component {
     return (
       <div className="NewStatus">
         <form onSubmit={this.handleSubmit}>
+
           <FormGroup controlId="title">
-            Headline:
+            <ControlLabel>Summary</ControlLabel>
             <FormControl
-              onChange={this.handleChange}
+              autoFocus
               value={this.state.title}
-              componentClass="text" />
+              onChange={this.handleChange}
+              componentClass="input" />
           </FormGroup>
-              Blocked?&nbsp;&nbsp;&nbsp; 
-          <ToggleButtonGroup type="radio" name="blocked">
-            <ToggleButton value={0} className="blocked-button">
-              No
-            </ToggleButton>
-            <ToggleButton value={1} className="blocked-button">
-              Yes
-            </ToggleButton>
-          </ToggleButtonGroup>
+
+          <div className="blocked">
+            <b>Blocked?</b>&nbsp;&nbsp;&nbsp;
+            <ToggleButtonGroup type="radio" name="userState">
+              <ToggleButton value="no" className="blocked-button">
+                No
+              </ToggleButton>
+              <ToggleButton value="yes" className="blocked-button">
+                Yes
+              </ToggleButton>
+            </ToggleButtonGroup>
+          </div>
+
           <FormGroup controlId="content">
-            Details:
+            <ControlLabel>Description</ControlLabel>
             <FormControl
               onChange={this.handleChange}
               value={this.state.content}
               componentClass="textarea" />
           </FormGroup>
+
           <FormGroup controlId="file">
             <ControlLabel>Attachment</ControlLabel>
             <FormControl

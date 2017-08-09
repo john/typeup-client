@@ -6,7 +6,6 @@ import {
   CognitoUser
 } from 'amazon-cognito-identity-js';
 import {
-  Button,
   FormGroup,
   FormControl,
   ControlLabel,
@@ -26,7 +25,7 @@ class Login extends Component {
       password: '',
     };
   }
-  
+
   login(username, password) {
     const userPool = new CognitoUserPool({
       UserPoolId: config.cognito.USER_POOL_ID,
@@ -61,9 +60,9 @@ class Login extends Component {
 
   handleSubmit = async (event) => {
     event.preventDefault();
-    
+
     this.setState({ isLoading: true });
-    
+
     try {
         const userToken = await this.login(this.state.username, this.state.password);
         this.props.updateUserToken(userToken);
