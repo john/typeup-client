@@ -29,7 +29,7 @@ class Status extends Component {
   }
 
   async componentDidMount() {
-    if( this.props.userToken == undefined) {
+    if( this.props.userToken === undefined) {
       this.props.history.push('/login');
     } else {
       try {

@@ -12,6 +12,9 @@ import {
   CognitoUserPool,
   CognitoUserAttribute,
 } from 'amazon-cognito-identity-js';
+
+import { invokeApig } from '../libs/awsLib';
+
 import config from '../config.js';
 import './Signup.css';
 
@@ -77,6 +80,18 @@ class Signup extends Component {
       );
 
       this.props.updateUserToken(userToken);
+      
+      
+      
+      
+      // TODO: remember to differentiate username and email once username is added as a login field.
+      const userParams = {token: userToken, userName: this.state.username, email: this.state.username }
+      console.log("--------> About to call createUser with:");
+      console.log( 'params: ' + userParams);
+      
+      // call createUser
+      this.createUser(userParams); 
+      
       this.props.history.push('/');
     }
     catch(e) {
@@ -84,7 +99,16 @@ class Signup extends Component {
       this.setState({ isLoading: false });
     }
   }
-
+  
+  createUser(userParams) {
+    console.log('----------> IN CREATE USER.')
+    return invokeApig({
+      path: '/users',
+      method: 'POST',
+      body: userParams,
+    }, this.props.userToken);
+  }
+  
   signup(username, password) {
     const userPool = new CognitoUserPool({
       UserPoolId: config.cognito.USER_POOL_ID,
@@ -98,7 +122,8 @@ class Signup extends Component {
           reject(err);
           return;
         }
-
+        
+        // write to ddb 'users' table here, or can that be done on the Cognito side?
         resolve(result.user);
       })
     ));

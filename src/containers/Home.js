@@ -28,10 +28,10 @@ class Home extends Component {
     this.setState({ isLoading: true });
 
     try {
-      // const results = await this.statuses();
-      // this.setState({ statuses: results });
-      const results = await this.users();
-      this.setState({ users: results });
+      const results = await this.statuses();
+      this.setState({ statuses: results });
+      // const results = await this.users();
+      // this.setState({ users: results });
     }
     catch(e) {
       alert(e);
@@ -40,13 +40,25 @@ class Home extends Component {
     this.setState({ isLoading: false });
   }
 
-  // statuses() {
-  //   return invokeApig({ path: '/statuses' }, this.props.userToken);
-  // }
-
   statuses() {
-    return invokeApig({ path: '/users' }, this.props.userToken);
+    return invokeApig({ path: '/statuses' }, this.props.userToken);
   }
+
+  // users() {
+  //   // Call Cognito directly.
+  //
+  //   // Pass in whatever Cognito/auth stuff you need via props
+  //   // usertoken is already available, can that be used to make Cognito calls, like listUsers?
+  //
+  //   const authenticationDetails = new AuthenticationDetails(authenticationData);
+  //
+  //   return new Promise((resolve, reject) => (
+  //     user.authenticateUser(authenticationDetails, {
+  //       onSuccess: (result) => resolve(result.getIdToken().getJwtToken()),
+  //       onFailure: (err) => reject(err),
+  //     })
+  //   ));
+  // }
 
   // This should return a list of users, with either the status summary of each, or an indication they haven't submitted it yet.
   renderStatusesList(statuses) {
@@ -75,7 +87,7 @@ class Home extends Component {
     );
   }
 
-  renderStatuses() {
+  renderUsers() {
     return (
       <div className="statuses">
         <div>
@@ -103,40 +115,40 @@ class Home extends Component {
     );
   }
 
-  // renderStatuses() {
-  //   return (
-  //     <div className="statuses">
-  //       <div>
-  //         <span>
-  //           <b>
-  //             Team Status for [date]
-  //           </b>
-  //         </span>
-  //         <LoaderButton
-  //           bsStyle="info"
-  //           bsSize="small"
-  //           className="pullRight"
-  //           isLoading={this.state.isDeleting}
-  //           href="/statuses/new"
-  //           onClick={this.handleStatusClick}
-  //           text="Add status"
-  //           loadingText="Deleting…" />
-  //       </div>
-  //
-  //       <ListGroup>
-  //         { ! this.state.isLoading
-  //           && this.renderStatusesList(this.state.statuses) }
-  //       </ListGroup>
-  //     </div>
-  //   );
-  // }
+  renderStatuses() {
+    return (
+      <div className="statuses">
+        <div>
+          <span>
+            <b>
+              Team Status for [date]
+            </b>
+          </span>
+          <LoaderButton
+            bsStyle="info"
+            bsSize="small"
+            className="pullRight"
+            isLoading={this.state.isDeleting}
+            href="/statuses/new"
+            onClick={this.handleStatusClick}
+            text="Add status"
+            loadingText="Deleting…" />
+        </div>
+
+        <ListGroup>
+          { ! this.state.isLoading
+            && this.renderStatusesList(this.state.statuses) }
+        </ListGroup>
+      </div>
+    );
+  }
 
   render() {
     return (
       <div className="Home">
         { this.props.userToken === null
           ? this.renderLander()
-          : this.renderUsers() }
+          : this.renderStatuses() }
       </div>
     );
   }
