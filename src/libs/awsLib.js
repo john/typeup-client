@@ -30,19 +30,21 @@ export async function invokeApig(
     queryParams = {},
     body }, userToken) {
 
+      console.log( "--------> IN invokeApig");
+
   if( userToken == null) {
     // redirect to login.
     this.props.history.push('/login');
   } else {
 
-    // console.log('userToken in invokeApig is: ' + userToken);
+    console.log('userToken in invokeApig is: ' + userToken);
     await getAwsCredentials(userToken);
 
-    // console.log('AWS.config.credentials.accessKeyId: ' + AWS.config.credentials.accessKeyId);
-    // console.log('AWS.config.credentials.secretAccessKey: ' + AWS.config.credentials.secretAccessKey);
-    // console.log('AWS.config.credentials.sessionToken: ' + AWS.config.credentials.sessionToken);
-    // console.log('config.apiGateway.REGION,: ' + config.apiGateway.REGION,);
-    // console.log('config.apiGateway.URL: ' + config.apiGateway.URL);
+    console.log('AWS.config.credentials.accessKeyId: ' + AWS.config.credentials.accessKeyId);
+    console.log('AWS.config.credentials.secretAccessKey: ' + AWS.config.credentials.secretAccessKey);
+    console.log('AWS.config.credentials.sessionToken: ' + AWS.config.credentials.sessionToken);
+    console.log('config.apiGateway.REGION,: ' + config.apiGateway.REGION,);
+    console.log('config.apiGateway.URL: ' + config.apiGateway.URL);
 
     const signedRequest = sigV4Client
       .newClient({

@@ -15,7 +15,6 @@ class Home extends Component {
 
     this.state = {
       isLoading: false,
-      statuses: [],
       users: [],
     };
   }
@@ -28,10 +27,8 @@ class Home extends Component {
     this.setState({ isLoading: true });
 
     try {
-      const results = await this.statuses();
-      this.setState({ statuses: results });
-      // const results = await this.users();
-      // this.setState({ users: results });
+      const results = await this.users();
+      this.setState({ users: results });
     }
     catch(e) {
       alert(e);
@@ -40,37 +37,26 @@ class Home extends Component {
     this.setState({ isLoading: false });
   }
 
-  statuses() {
-    return invokeApig({ path: '/statuses' }, this.props.userToken);
+  users() {
+    return invokeApig({ path: '/users' }, this.props.userToken);
   }
 
-  // users() {
-  //   // Call Cognito directly.
-  //
-  //   // Pass in whatever Cognito/auth stuff you need via props
-  //   // usertoken is already available, can that be used to make Cognito calls, like listUsers?
-  //
-  //   const authenticationDetails = new AuthenticationDetails(authenticationData);
-  //
-  //   return new Promise((resolve, reject) => (
-  //     user.authenticateUser(authenticationDetails, {
-  //       onSuccess: (result) => resolve(result.getIdToken().getJwtToken()),
-  //       onFailure: (err) => reject(err),
-  //     })
-  //   ));
-  // }
-
   // This should return a list of users, with either the status summary of each, or an indication they haven't submitted it yet.
-  renderStatusesList(statuses) {
-    return statuses.map((stat) => (
+  renderUsersList(users) {
+    return users.map((user) => (
       <ListGroupItem
-        key={stat.statusId}
-        href={`/statuses/${stat.statusId}`}
+        key={user.userId}
+        href={`/users/${user.name}`}
         onClick={this.handleStatusClick}
-        header={stat.title.trim().split('\n')[0]}>
-          { "Created: " + (new Date(stat.createdAt)).toLocaleString() }
+        header={user.name}>
+          { "Created: " + (new Date(user.createdAt)).toLocaleString() }
       </ListGroupItem>
     ));
+  }
+
+  handleStatusClick = (event) => {
+    event.preventDefault();
+    this.props.history.push(event.currentTarget.getAttribute('href'));
   }
 
   handleStatusClick = (event) => {
@@ -89,8 +75,8 @@ class Home extends Component {
 
   renderUsers() {
     return (
-      <div className="statuses">
-        <div>
+      <div className="users">
+        <PageHeader>
           <span>
             <b>
               Team Status for [date]
@@ -103,41 +89,13 @@ class Home extends Component {
             isLoading={this.state.isDeleting}
             href="/statuses/new"
             onClick={this.handleStatusClick}
-            text="Add status"
+            text="Post status"
             loadingText="Deleting…" />
-        </div>
+        </PageHeader>
 
         <ListGroup>
           { ! this.state.isLoading
             && this.renderUsersList(this.state.users) }
-        </ListGroup>
-      </div>
-    );
-  }
-
-  renderStatuses() {
-    return (
-      <div className="statuses">
-        <div>
-          <span>
-            <b>
-              Team Status for [date]
-            </b>
-          </span>
-          <LoaderButton
-            bsStyle="info"
-            bsSize="small"
-            className="pullRight"
-            isLoading={this.state.isDeleting}
-            href="/statuses/new"
-            onClick={this.handleStatusClick}
-            text="Add status"
-            loadingText="Deleting…" />
-        </div>
-
-        <ListGroup>
-          { ! this.state.isLoading
-            && this.renderStatusesList(this.state.statuses) }
         </ListGroup>
       </div>
     );
@@ -148,7 +106,7 @@ class Home extends Component {
       <div className="Home">
         { this.props.userToken === null
           ? this.renderLander()
-          : this.renderStatuses() }
+          : this.renderUsers() }
       </div>
     );
   }

@@ -24,7 +24,8 @@ class Signup extends Component {
 
     this.state = {
       isLoading: false,
-      username: '',
+      name: '',
+      email: '',
       password: '',
       confirmPassword: '',
       confirmationCode: '',
@@ -33,12 +34,14 @@ class Signup extends Component {
   }
 
   validateForm() {
-    return this.state.username.length > 0
+    return this.state.name.length > 0
+      && this.state.email.length > 0
       && this.state.password.length > 0
       && this.state.password === this.state.confirmPassword;
   }
 
   validateConfirmationForm() {
+    console.log ("--------------------> in validateConfirmationForm.");
     return this.state.confirmationCode.length > 0;
   }
 
@@ -49,12 +52,15 @@ class Signup extends Component {
   }
 
   handleSubmit = async (event) => {
+    console.log ("--------------------> in handleSubmit.");
     event.preventDefault();
 
     this.setState({ isLoading: true });
 
     try {
-      const newUser = await this.signup(this.state.username, this.state.password);
+      console.log ("--------------------> about to call this.signup.");
+      const newUser = await this.signup(this.state.name, this.state.email, this.state.password);
+      console.log("----->> bet we don't get here.")
       this.setState({
         newUser: newUser
       });
@@ -75,23 +81,19 @@ class Signup extends Component {
       await this.confirm(this.state.newUser, this.state.confirmationCode);
       const userToken = await this.authenticate(
         this.state.newUser,
-        this.state.username,
+        this.state.email,
         this.state.password
       );
 
       this.props.updateUserToken(userToken);
-      
-      
-      
-      
-      // TODO: remember to differentiate username and email once username is added as a login field.
-      const userParams = {token: userToken, userName: this.state.username, email: this.state.username }
+
+      const userParams = {token: userToken, name: this.state.name, email: this.state.email }
       console.log("--------> About to call createUser with:");
       console.log( 'params: ' + userParams);
-      
+
       // call createUser
-      this.createUser(userParams); 
-      
+      this.createUser(userParams);
+
       this.props.history.push('/');
     }
     catch(e) {
@@ -99,7 +101,7 @@ class Signup extends Component {
       this.setState({ isLoading: false });
     }
   }
-  
+
   createUser(userParams) {
     console.log('----------> IN CREATE USER.')
     return invokeApig({
@@ -108,21 +110,37 @@ class Signup extends Component {
       body: userParams,
     }, this.props.userToken);
   }
-  
-  signup(username, password) {
+
+  signup(name, email, password) {
+    console.log ("--------------------> in signup. name is: ");
+    console.log (name);
+    console.log ("-------------------> email is: " + email);
+    console.log ("---------> password is: " + password);
+
     const userPool = new CognitoUserPool({
       UserPoolId: config.cognito.USER_POOL_ID,
       ClientId: config.cognito.APP_CLIENT_ID
     });
-    const attributeEmail = new CognitoUserAttribute({ Name : 'email', Value : username });
+
+    console.log("------> got here 1");
+    // const attributes = new CognitoUserAttribute({ Name: 'name', Value: name }, {Name: 'email', Value: email});
+    // console.log("---------------------> attributes['email'], in signup: " + attributes['email']);
+    var attributeList = [];
+    console.log("------> got here 2");
+    var attributeEmail = new CognitoUserAttribute({ Name: 'email', Value: email });
+    console.log("------> got here 3");
+    var attributePhoneNumber = new CognitoUserAttribute({Name: 'name', Value: name});
+    attributeList.push(attributeEmail);
+    attributeList.push(attributePhoneNumber);
+    console.log("-------> about to make a promise");
 
     return new Promise((resolve, reject) => (
-      userPool.signUp(username, password, [attributeEmail], null, (err, result) => {
+      userPool.signUp(email, password, attributeList, null, (err, result) => {
         if (err) {
           reject(err);
           return;
         }
-        
+
         // write to ddb 'users' table here, or can that be done on the Cognito side?
         resolve(result.user);
       })
@@ -141,9 +159,9 @@ class Signup extends Component {
     ));
   }
 
-  authenticate(user, username, password) {
+  authenticate(user, email, password) {
     const authenticationData = {
-      Username: username,
+      Username: email,
       Password: password
     };
     const authenticationDetails = new AuthenticationDetails(authenticationData);
@@ -183,12 +201,19 @@ class Signup extends Component {
   renderForm() {
     return (
       <form onSubmit={this.handleSubmit}>
-        <FormGroup controlId="username" bsSize="large">
-          <ControlLabel>Email</ControlLabel>
+        <FormGroup controlId="name" bsSize="large">
+          <ControlLabel>Name</ControlLabel>
           <FormControl
             autoFocus
+            type="text"
+            value={this.state.name}
+            onChange={this.handleChange} />
+        </FormGroup>
+        <FormGroup controlId="email" bsSize="large">
+          <ControlLabel>Email</ControlLabel>
+          <FormControl
             type="email"
-            value={this.state.username}
+            value={this.state.email}
             onChange={this.handleChange} />
         </FormGroup>
         <FormGroup controlId="password" bsSize="large">

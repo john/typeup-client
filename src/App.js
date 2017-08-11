@@ -25,7 +25,7 @@ class App extends Component {
       isLoadingUserToken: true,
     };
   }
-  
+
   async componentDidMount() {
     const currentUser = this.getCurrentUser();
 
@@ -44,7 +44,7 @@ class App extends Component {
 
     this.setState({isLoadingUserToken: false});
   }
-  
+
   getCurrentUser() {
     const userPool = new CognitoUserPool({
       UserPoolId: config.cognito.USER_POOL_ID,
@@ -70,33 +70,33 @@ class App extends Component {
       userToken: userToken
     });
   }
-  
+
   handleNavLink = (event) => {
     event.preventDefault();
     this.props.history.push(event.currentTarget.getAttribute('href'));
   }
-  
+
   handleLogout = (event) => {
     const currentUser = this.getCurrentUser();
 
     if (currentUser !== null) {
       currentUser.signOut();
     }
-    
+
     if (AWS.config.credentials) {
       AWS.config.credentials.clearCachedId();
     }
-    
+
     this.updateUserToken(null);
     this.props.history.push('/login');
   }
-  
+
   render() {
     const childProps = {
       userToken: this.state.userToken,
       updateUserToken: this.updateUserToken,
     };
-    
+
   return ! this.state.isLoadingUserToken
     &&
     (
@@ -104,7 +104,7 @@ class App extends Component {
         <Navbar fluid collapseOnSelect>
           <Navbar.Header>
             <Navbar.Brand>
-              <Link to="/">TypeUp</Link>
+              <Link to="/">PostUp</Link>
             </Navbar.Brand>
             <Navbar.Toggle />
           </Navbar.Header>

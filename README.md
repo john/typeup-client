@@ -5,6 +5,8 @@ This is the front end React client to all the TypeUp APIs demos. All of the demo
 
 ### TODO:
 
+- When you first sign up and Home.js loads, it's not getting users.
+
 #### Features:
 - Need to collect user's names when they sign up.
 - API needs to verify auth before returning anything, if it's not already
