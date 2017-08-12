@@ -41,7 +41,6 @@ class Signup extends Component {
   }
 
   validateConfirmationForm() {
-    console.log ("--------------------> in validateConfirmationForm.");
     return this.state.confirmationCode.length > 0;
   }
 
@@ -52,15 +51,12 @@ class Signup extends Component {
   }
 
   handleSubmit = async (event) => {
-    console.log ("--------------------> in handleSubmit.");
     event.preventDefault();
 
     this.setState({ isLoading: true });
 
     try {
-      console.log ("--------------------> about to call this.signup.");
       const newUser = await this.signup(this.state.name, this.state.email, this.state.password);
-      console.log("----->> bet we don't get here.")
       this.setState({
         newUser: newUser
       });
@@ -88,8 +84,6 @@ class Signup extends Component {
       this.props.updateUserToken(userToken);
 
       const userParams = {token: userToken, name: this.state.name, email: this.state.email }
-      console.log("--------> About to call createUser with:");
-      console.log( 'params: ' + userParams);
 
       // call createUser
       this.createUser(userParams);
@@ -103,7 +97,6 @@ class Signup extends Component {
   }
 
   createUser(userParams) {
-    console.log('----------> IN CREATE USER.')
     return invokeApig({
       path: '/users',
       method: 'POST',
@@ -112,27 +105,16 @@ class Signup extends Component {
   }
 
   signup(name, email, password) {
-    console.log ("--------------------> in signup. name is: ");
-    console.log (name);
-    console.log ("-------------------> email is: " + email);
-    console.log ("---------> password is: " + password);
-
     const userPool = new CognitoUserPool({
       UserPoolId: config.cognito.USER_POOL_ID,
       ClientId: config.cognito.APP_CLIENT_ID
     });
 
-    console.log("------> got here 1");
-    // const attributes = new CognitoUserAttribute({ Name: 'name', Value: name }, {Name: 'email', Value: email});
-    // console.log("---------------------> attributes['email'], in signup: " + attributes['email']);
     var attributeList = [];
-    console.log("------> got here 2");
     var attributeEmail = new CognitoUserAttribute({ Name: 'email', Value: email });
-    console.log("------> got here 3");
     var attributePhoneNumber = new CognitoUserAttribute({Name: 'name', Value: name});
     attributeList.push(attributeEmail);
     attributeList.push(attributePhoneNumber);
-    console.log("-------> about to make a promise");
 
     return new Promise((resolve, reject) => (
       userPool.signUp(email, password, attributeList, null, (err, result) => {
@@ -141,7 +123,6 @@ class Signup extends Component {
           return;
         }
 
-        // write to ddb 'users' table here, or can that be done on the Cognito side?
         resolve(result.user);
       })
     ));

@@ -111,7 +111,7 @@ class App extends Component {
           <Navbar.Collapse>
             <Nav pullRight>
               { this.state.userToken
-                ? <NavItem onClick={this.handleLogout}>Logout</NavItem>
+                ? <NavItem onClick={this.handleLogout}>Logout ({this.getCurrentUser().username})</NavItem>
                 : [ <RouteNavItem key={1} onClick={this.handleNavLink} href="/signup">Signup</RouteNavItem>,
                     <RouteNavItem key={2} onClick={this.handleNavLink} href="/login">Login</RouteNavItem> ] }
             </Nav>

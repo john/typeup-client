@@ -43,13 +43,14 @@ class Home extends Component {
 
   // This should return a list of users, with either the status summary of each, or an indication they haven't submitted it yet.
   renderUsersList(users) {
-    return users.map((user) => (
+    // return users.map((user) => (
+      return [{}].concat(users).map((user, i) => (
       <ListGroupItem
-        key={user.userId}
+        key={user.username}
         href={`/users/${user.name}`}
         onClick={this.handleStatusClick}
         header={user.name}>
-          { "Created: " + (new Date(user.createdAt)).toLocaleString() }
+          { "status: " + user.last_status_title }
       </ListGroupItem>
     ));
   }

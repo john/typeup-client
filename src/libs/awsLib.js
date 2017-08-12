@@ -3,7 +3,6 @@ import sigV4Client from './sigV4Client';
 import config from '../config.js';
 
 export function getAwsCredentials(userToken) {
-  // console.log('userToken in getAwsCredentials is: ' + userToken);
   if (AWS.config.credentials && Date.now() < AWS.config.credentials.expireTime - 60000) {
     return;
   }
@@ -11,7 +10,6 @@ export function getAwsCredentials(userToken) {
   const authenticator = `cognito-idp.${config.cognito.REGION}.amazonaws.com/${config.cognito.USER_POOL_ID}`;
 
   AWS.config.update({ region: config.cognito.REGION });
-
   AWS.config.credentials = new AWS.CognitoIdentityCredentials({
     IdentityPoolId: config.cognito.IDENTITY_POOL_ID,
     Logins: {
@@ -30,21 +28,11 @@ export async function invokeApig(
     queryParams = {},
     body }, userToken) {
 
-      console.log( "--------> IN invokeApig");
-
   if( userToken == null) {
     // redirect to login.
     this.props.history.push('/login');
   } else {
-
-    console.log('userToken in invokeApig is: ' + userToken);
     await getAwsCredentials(userToken);
-
-    console.log('AWS.config.credentials.accessKeyId: ' + AWS.config.credentials.accessKeyId);
-    console.log('AWS.config.credentials.secretAccessKey: ' + AWS.config.credentials.secretAccessKey);
-    console.log('AWS.config.credentials.sessionToken: ' + AWS.config.credentials.sessionToken);
-    console.log('config.apiGateway.REGION,: ' + config.apiGateway.REGION,);
-    console.log('config.apiGateway.URL: ' + config.apiGateway.URL);
 
     const signedRequest = sigV4Client
       .newClient({
