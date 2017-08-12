@@ -55,9 +55,10 @@ class NewStatus extends Component {
         : null;
 
       await this.createStatus({
+        userName: this.props.currentUserName,
         title: this.state.title,
-        userState: this.state.userState,
         content: this.state.content,
+        userState: this.state.userState,
         attachment: uploadedFilename,
       });
       this.props.history.push('/');
@@ -80,7 +81,7 @@ class NewStatus extends Component {
     return (
       <div className="NewStatus">
         <form onSubmit={this.handleSubmit}>
-
+          <input type="hidden" id="userName" value={this.props.currentUserName} />
           <FormGroup controlId="title">
             <ControlLabel>Summary</ControlLabel>
             <FormControl

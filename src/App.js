@@ -22,6 +22,7 @@ class App extends Component {
 
     this.state = {
       userToken: null,
+      userName: null,
       isLoadingUserToken: true,
     };
   }
@@ -37,12 +38,14 @@ class App extends Component {
     try {
       const userToken = await this.getUserToken(currentUser);
       this.updateUserToken(userToken);
+      this.setState({userName: this.getCurrentUser().username});
     }
     catch(e) {
       alert(e);
     }
 
     this.setState({isLoadingUserToken: false});
+
   }
 
   getCurrentUser() {
@@ -65,6 +68,7 @@ class App extends Component {
     });
   }
 
+  // why is this it it's own function?
   updateUserToken = (userToken) => {
     this.setState({
       userToken: userToken
@@ -94,32 +98,37 @@ class App extends Component {
   render() {
     const childProps = {
       userToken: this.state.userToken,
+      userName: this.state.userName,
       updateUserToken: this.updateUserToken,
-    };
+    }
 
-  return ! this.state.isLoadingUserToken
-    &&
-    (
-      <div className="App container">
-        <Navbar fluid collapseOnSelect>
-          <Navbar.Header>
-            <Navbar.Brand>
-              <Link to="/">PostUp</Link>
-            </Navbar.Brand>
-            <Navbar.Toggle />
-          </Navbar.Header>
-          <Navbar.Collapse>
-            <Nav pullRight>
-              { this.state.userToken
-                ? <NavItem onClick={this.handleLogout}>Logout ({this.getCurrentUser().username})</NavItem>
-                : [ <RouteNavItem key={1} onClick={this.handleNavLink} href="/signup">Signup</RouteNavItem>,
-                    <RouteNavItem key={2} onClick={this.handleNavLink} href="/login">Login</RouteNavItem> ] }
-            </Nav>
-          </Navbar.Collapse>
-        </Navbar>
-        <Routes childProps={childProps} />
-      </div>
-    );
+    if( this.state.userToken ) {
+      childProps.currentUserName = this.state.userName;
+    }
+
+    return ! this.state.isLoadingUserToken
+      &&
+      (
+        <div className="App container">
+          <Navbar fluid collapseOnSelect>
+            <Navbar.Header>
+              <Navbar.Brand>
+                <Link to="/">PostUp</Link>
+              </Navbar.Brand>
+              <Navbar.Toggle />
+            </Navbar.Header>
+            <Navbar.Collapse>
+              <Nav pullRight>
+                { this.state.userToken
+                  ? <NavItem onClick={this.handleLogout}>Logout ({this.getCurrentUser().username})</NavItem>
+                  : [ <RouteNavItem key={1} onClick={this.handleNavLink} href="/signup">Signup</RouteNavItem>,
+                      <RouteNavItem key={2} onClick={this.handleNavLink} href="/login">Login</RouteNavItem> ] }
+              </Nav>
+            </Navbar.Collapse>
+          </Navbar>
+          <Routes childProps={childProps} />
+        </div>
+      );
   }
 }
 

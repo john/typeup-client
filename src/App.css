@@ -5,3 +5,11 @@
 .App .navbar-brand {
   font-weight: bold;
 }
+
+.today {
+  background-color: #E9F7EF;
+}
+
+.not-today {
+  background-color: #FADBD8;
+}

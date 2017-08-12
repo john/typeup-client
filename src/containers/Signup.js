@@ -83,7 +83,7 @@ class Signup extends Component {
 
       this.props.updateUserToken(userToken);
 
-      const userParams = {token: userToken, name: this.state.name, email: this.state.email }
+      const userParams = {userToken: userToken, userName: this.state.email, name: this.state.name, email: this.state.email }
 
       // call createUser
       this.createUser(userParams);
@@ -97,6 +97,7 @@ class Signup extends Component {
   }
 
   createUser(userParams) {
+    console.log("-----------> userParams['username'] in createUser: " + userParams['username'])
     return invokeApig({
       path: '/users',
       method: 'POST',

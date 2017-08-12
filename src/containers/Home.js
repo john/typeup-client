@@ -13,9 +13,14 @@ class Home extends Component {
   constructor(props) {
     super(props);
 
+    this.getDate(new Date());
+
     this.state = {
+      today: this.getDate(new Date()),
       isLoading: false,
       users: [],
+      statusButtonPath: "/statuses/new",
+      statusButtonLabel: "Add status",
     };
   }
 
@@ -29,6 +34,16 @@ class Home extends Component {
     try {
       const results = await this.users();
       this.setState({ users: results });
+
+      // loop through users, see if this user has a status for today, if so set hasTodayStatus
+      if( this.state.users.length > 0 ) {
+        this.state.users.forEach(function(elem) {
+          if( elem.userName === this.props.userName && 'last_status_title' in elem) {
+            this.setState({statusButtonPath: "/statuses/edit"});
+            this.setState({statusButtonLabel: "Edit status"});
+          }
+        }, this)
+      }
     }
     catch(e) {
       alert(e);
@@ -41,16 +56,24 @@ class Home extends Component {
     return invokeApig({ path: '/users' }, this.props.userToken);
   }
 
+  getDate(theDate) {
+    if( (typeof theDate) == 'string' ) {
+      theDate = new Date(theDate);
+    }
+    return theDate.toJSON().slice(0,10).replace(/-/g,'/');
+  }
+
   // This should return a list of users, with either the status summary of each, or an indication they haven't submitted it yet.
   renderUsersList(users) {
-    // return users.map((user) => (
-      return [{}].concat(users).map((user, i) => (
+
+    return [].concat(users).map((user, i) => (
       <ListGroupItem
-        key={user.username}
+        key={user.userName}
         href={`/users/${user.name}`}
         onClick={this.handleStatusClick}
+        className={(this.state.today === this.getDate(user.last_status_createdAt)) ? 'today' : 'not-today'}
         header={user.name}>
-          { "status: " + user.last_status_title }
+          { "Status: " + user.last_status_title }
       </ListGroupItem>
     ));
   }
@@ -68,8 +91,8 @@ class Home extends Component {
   renderLander() {
     return (
       <div className="lander">
-        <h1>TypeUp</h1>
-        <p>Dont Get Up. TypeUp!</p>
+        <h1>PostUp</h1>
+        <p>Dont Get Up. PostUp!</p>
       </div>
     );
   }
@@ -80,7 +103,7 @@ class Home extends Component {
         <PageHeader>
           <span>
             <b>
-              Team Status for [date]
+              Team Status for {this.state.today}
             </b>
           </span>
           <LoaderButton
@@ -88,9 +111,9 @@ class Home extends Component {
             bsSize="small"
             className="pullRight"
             isLoading={this.state.isDeleting}
-            href="/statuses/new"
+            href={this.state.statusButtonPath}
             onClick={this.handleStatusClick}
-            text="Post status"
+            text={this.state.statusButtonLabel}
             loadingText="Deleting…" />
         </PageHeader>
 
