@@ -13,10 +13,8 @@ class Home extends Component {
   constructor(props) {
     super(props);
 
-    this.getDate(new Date());
-
     this.state = {
-      today: this.getDate(new Date()),
+      today: this.getDateAsString(new Date()),
       isLoading: false,
       users: [],
       statusButtonPath: "/statuses/new",
@@ -32,16 +30,20 @@ class Home extends Component {
     this.setState({ isLoading: true });
 
     try {
-      const results = await this.users();
-      this.setState({ users: results });
+      const users = await this.users();
+      this.setState({ users: users });
 
-      // loop through users, see if this user has a status for today, if so set hasTodayStatus
-      if( this.state.users.length > 0 ) {
-        this.state.users.forEach(function(elem) {
-          if( elem.userName === this.props.userName && 'last_status_title' in elem) {
-            this.setState({statusButtonPath: "/statuses/edit"});
-            this.setState({statusButtonLabel: "Edit status"});
+      if( users.length > 0 ) {
+        users.some(function(user) {
+
+          if( user.userName === this.props.userName) {
+            if( this.state.today === this.getDateAsString(user.last_status_createdAt)) {
+              this.setState({statusButtonPath: "/statuses/edit"});
+              this.setState({statusButtonLabel: "Edit status"});
+            }
+            return true;
           }
+
         }, this)
       }
     }
@@ -56,28 +58,13 @@ class Home extends Component {
     return invokeApig({ path: '/users' }, this.props.userToken);
   }
 
-  getDate(theDate) {
-    if( (typeof theDate) == 'string' ) {
+  getDateAsString(theDate) {
+    if( (typeof theDate) === 'string' ) {
       theDate = new Date(theDate);
     }
     return theDate.toJSON().slice(0,10).replace(/-/g,'/');
   }
 
-  // This should return a list of users, with either the status summary of each, or an indication they haven't submitted it yet.
-  renderUsersList(users) {
-
-    return [].concat(users).map((user, i) => (
-      <ListGroupItem
-        key={user.userName}
-        href={`/users/${user.name}`}
-        onClick={this.handleStatusClick}
-        className={(this.state.today === this.getDate(user.last_status_createdAt)) ? 'today' : 'not-today'}
-        header={user.name}>
-          { "Status: " + user.last_status_title }
-      </ListGroupItem>
-    ));
-  }
-
   handleStatusClick = (event) => {
     event.preventDefault();
     this.props.history.push(event.currentTarget.getAttribute('href'));
@@ -86,6 +73,16 @@ class Home extends Component {
   handleStatusClick = (event) => {
     event.preventDefault();
     this.props.history.push(event.currentTarget.getAttribute('href'));
+  }
+
+  render() {
+    return (
+      <div className="Home">
+        { this.props.userToken === null
+          ? this.renderLander()
+          : this.renderUsers() }
+      </div>
+    );
   }
 
   renderLander() {
@@ -125,15 +122,52 @@ class Home extends Component {
     );
   }
 
-  render() {
+  renderUsersList(users) {
+    return users.map(function(user) {
+      if (this.state.today == this.getDateAsString(user.last_status_createdAt)) {
+        return this.renderToday(user);
+      } else {
+        return this.renderNotToday(user);
+      }
+    }, this);
+  }
+
+  renderToday(user) {
     return (
-      <div className="Home">
-        { this.props.userToken === null
-          ? this.renderLander()
-          : this.renderUsers() }
+    <ListGroupItem
+      key={user.userName}
+      href={`/users/${user.name}`}
+      onClick={this.handleStatusClick}
+      className='today'
+      header={user.name}>
+      <div>
+        {user.last_status_title}
       </div>
+      <div className='status-date'>
+        Today at *time*
+      </div>
+    </ListGroupItem>
     );
   }
+
+  renderNotToday(user) {
+    return (
+      <ListGroupItem
+        key={user.userName}
+        href={`/users/${user.name}`}
+        onClick={this.handleStatusClick}
+        className='not-today'
+        header={user.name}>
+        <div>
+          {user.last_status_title}
+        </div>
+        <div className='status-date'>
+          {this.getDateAsString(user.last_status_createdAt)}
+        </div>
+      </ListGroupItem>
+    );
+  }
+
 }
 
 export default withRouter(Home);

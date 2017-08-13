@@ -45,7 +45,6 @@ class App extends Component {
     }
 
     this.setState({isLoadingUserToken: false});
-
   }
 
   getCurrentUser() {
@@ -68,7 +67,6 @@ class App extends Component {
     });
   }
 
-  // why is this it it's own function?
   updateUserToken = (userToken) => {
     this.setState({
       userToken: userToken

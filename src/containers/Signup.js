@@ -97,7 +97,6 @@ class Signup extends Component {
   }
 
   createUser(userParams) {
-    console.log("-----------> userParams['username'] in createUser: " + userParams['username'])
     return invokeApig({
       path: '/users',
       method: 'POST',
