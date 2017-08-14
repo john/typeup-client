@@ -136,16 +136,20 @@ class Home extends Component {
     return (
     <ListGroupItem
       key={user.userName}
-      href={`/users/${user.name}`}
-      onClick={this.handleStatusClick}
-      className='today'
-      header={user.name}>
-      <div>
+      // href={`/users/${user.name}`}
+      // onClick={this.handleStatusClick}
+      className='today'>
+
+    <h4 className="list-group-item-heading">
+      {user.name}
+    </h4>
+    <div>
+      <span className='status-date'>Today’s status: </span>
+      <a href={`/statuses/${user.last_status_id}`}>
         {user.last_status_title}
-      </div>
-      <div className='status-date'>
-        Today at *time*
-      </div>
+      </a>
+    </div>
+
     </ListGroupItem>
     );
   }
@@ -154,16 +158,18 @@ class Home extends Component {
     return (
       <ListGroupItem
         key={user.userName}
-        href={`/users/${user.name}`}
-        onClick={this.handleStatusClick}
-        className='not-today'
-        header={user.name}>
-        <div>
+        //onClick={this.handleStatusClick}
+        className='not-today'>
+
+        <h4 className="list-group-item-heading">
+          {user.name}
+        </h4>
+      <div>
+        <span className='status-date'>Last status: </span>
+        <a href={`/statuses/${user.last_status_id}`}>
           {user.last_status_title}
-        </div>
-        <div className='status-date'>
-          {this.getDateAsString(user.last_status_createdAt)}
-        </div>
+        </a>
+      </div>
       </ListGroupItem>
     );
   }

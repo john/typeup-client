@@ -48,7 +48,7 @@ class Status extends Component {
   }
 
   getStatus() {
-    return invokeApig({ path: `/statuses/${this.props.match.params.id}` }, this.props.userToken);
+    return invokeApig({ path: `/statuses/${this.props.match.params.statusId}` }, this.props.userToken);
   }
 
   validateForm() {
