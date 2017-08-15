@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { withRouter } from 'react-router-dom';
+import Moment from 'react-moment';
 import { invokeApig } from '../libs/awsLib';
 import {
   PageHeader,
@@ -7,6 +8,7 @@ import {
   ListGroupItem,
 } from 'react-bootstrap';
 import LoaderButton from '../components/LoaderButton';
+import StatusItem from '../components/StatusItem';
 import './Home.css';
 
 class Home extends Component {
@@ -17,8 +19,7 @@ class Home extends Component {
       today: this.getDateAsString(new Date()),
       isLoading: false,
       users: [],
-      statusButtonPath: "/statuses/new",
-      statusButtonLabel: "Add your status",
+      hasStatusToday: false,
     };
   }
 
@@ -32,14 +33,11 @@ class Home extends Component {
     try {
       const users = await this.users();
       this.setState({ users: users });
-
+      
       if( users.length > 0 ) {
         users.some(function(user) {
-          if( user.userName === this.props.userName) {
-            if( this.state.today === this.getDateAsString(user.last_status_createdAt)) {
-              this.setState({statusButtonPath: "/statuses/edit"});
-              this.setState({statusButtonLabel: "Edit your status"});
-            }
+          if( user.userName === this.props.userName && user.last_status_title ) {
+            this.setState({hasStatusToday: true});
             return true;
           }
         }, this)
@@ -89,7 +87,7 @@ class Home extends Component {
     return (
       <div className="lander">
         <h1>PostUp</h1>
-        <p>Dont Get Up. PostUp!</p>
+        <p>Sit down, PostUp.</p>
       </div>
     );
   }
@@ -100,18 +98,24 @@ class Home extends Component {
         <PageHeader>
           <span>
             <b>
-              Team Status for {this.state.today}
+              Team Status for <Moment format="dddd, MMMM Do">{this.state.today}</Moment>
             </b>
           </span>
-          <LoaderButton
+      
+          {
+          ! this.state.hasStatusToday
+            ?
+            <LoaderButton
             bsStyle="info"
             bsSize="small"
             className="pullRight"
             isLoading={this.state.isDeleting}
-            href={this.state.statusButtonPath}
+            href="/statuses/new"
             onClick={this.handleStatusClick}
-            text={this.state.statusButtonLabel}
-            loadingText="Deleting…" />
+            text="Add your status" />
+            : null
+          }
+          
         </PageHeader>
 
         <ListGroup>
@@ -134,30 +138,7 @@ class Home extends Component {
   
   renderToday(user) {
     return (
-    <ListGroupItem
-      key={user.userName}
-      className='today'>
-      <h4 className="list-group-item-heading">
-        {user.name}&nbsp;&nbsp;
-        <small>
-          timestamp
-        </small>
-      </h4>
-      <div>
-        <a href={`/statuses/${user.last_status_id}`}>
-          {user.last_status_title}
-        </a>
-        <p>
-        <small>
-          Show paperclip if there's an attachment.
-          Maybe we don't even want a status page--instead a 'more' link to reveal the description, if there is one, and the attachement opens in a different window.
-          Limit the number of characters allowed in both the summary and description, and be funny about it--this is a standup, damnit.
-          Put a pencil edit icon next to your own status for that day, and get rid of the edit utton in the header (probably want to keep the 'add' one.)
-        </small>
-        </p>
-      </div>
-
-    </ListGroupItem>
+      <StatusItem user={user} key={user.userName} />
     );
   }
   

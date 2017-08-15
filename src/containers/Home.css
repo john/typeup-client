@@ -32,3 +32,22 @@
 .status-date {
   color: #777;
 }
+
+.more {
+  padding-top: 15px;
+}
+
+.more .small {
+  cursor: pointer;
+  cursor: hand; color: blue;
+  padding-top: 5px;
+}
+
+.Home Button {
+  margin: 0 5px 0 0;
+  color: white;
+}
+
+.Home Button a {
+  color: white;
+}

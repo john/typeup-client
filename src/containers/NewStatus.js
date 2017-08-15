@@ -7,6 +7,8 @@ import {
   ToggleButtonGroup,
   ToggleButton,
   ControlLabel,
+  Button,
+  Glyphicon,
 } from 'react-bootstrap';
 import LoaderButton from '../components/LoaderButton';
 import config from '../config.js';
@@ -22,6 +24,7 @@ class NewStatus extends Component {
       title: '',
       userState: 'foo',
       content: '',
+      hasFileAttached: false,
     };
   }
 
@@ -30,13 +33,22 @@ class NewStatus extends Component {
   }
 
   handleChange = (event) => {
-    this.setState({
-      [event.target.id]: event.target.value
-    });
+    if( event.target.id == 'title' && event.target.value.length > 250) {
+      alert("Keep it brief please, you're not at Toastmasters.");
+      return false; 
+    }
+    
+    if( event.target.id == 'content' && event.target.value.length > 250) {
+      alert("Keep it brief please, you're not at Toastmasters.");
+      return false; 
+    }
+    
+    this.setState({ [event.target.id]: event.target.value });
   }
 
   handleFileChange = (event) => {
     this.file = event.target.files[0];
+    this.setState({hasFileAttached: true});
   }
 
   handleSubmit = async (event) => {
@@ -83,28 +95,16 @@ class NewStatus extends Component {
         <form onSubmit={this.handleSubmit}>
           <input type="hidden" id="userName" value={this.props.currentUserName} />
           <FormGroup controlId="title">
-            <ControlLabel>Summary</ControlLabel>
+            <ControlLabel>Your status</ControlLabel>
             <FormControl
               autoFocus
               value={this.state.title}
               onChange={this.handleChange}
-              componentClass="input" />
+              componentClass="textarea" />
           </FormGroup>
 
-          <div className="blocked">
-            <b>Blocked?</b>&nbsp;&nbsp;&nbsp;
-            <ToggleButtonGroup type="radio" name="userState">
-              <ToggleButton value="no" className="blocked-button">
-                No
-              </ToggleButton>
-              <ToggleButton value="yes" className="blocked-button">
-                Yes
-              </ToggleButton>
-            </ToggleButtonGroup>
-          </div>
-
           <FormGroup controlId="content">
-            <ControlLabel>Description</ControlLabel>
+            <ControlLabel>Further details, if you must</ControlLabel>
             <FormControl
               onChange={this.handleChange}
               value={this.state.content}
@@ -112,11 +112,25 @@ class NewStatus extends Component {
           </FormGroup>
 
           <FormGroup controlId="file">
-            <ControlLabel>Attachment</ControlLabel>
+            <ControlLabel>
+              <div className='btn btn-default'>
+                Attach file <Glyphicon glyph="paperclip" />
+              </div>
+            </ControlLabel>
+              
             <FormControl
               onChange={this.handleFileChange}
+              className="upload"
               type="file" />
+              
+            {
+            this.state.hasFileAttached
+              ?
+              <label>&nbsp;&nbsp;{this.file.name}</label>
+              : null
+            }
           </FormGroup>
+              
           <LoaderButton
             block
             bsStyle="primary"

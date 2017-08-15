@@ -12,9 +12,7 @@ import {
   CognitoUserPool,
   CognitoUserAttribute,
 } from 'amazon-cognito-identity-js';
-
 import { invokeApig } from '../libs/awsLib';
-
 import config from '../config.js';
 import './Signup.css';
 
@@ -51,11 +49,13 @@ class Signup extends Component {
   }
 
   handleSubmit = async (event) => {
+  //handleSubmit = (event) => {
     event.preventDefault();
 
     this.setState({ isLoading: true });
 
     try {
+      //const newUser = this.signup(this.state.name, this.state.email, this.state.password);
       const newUser = await this.signup(this.state.name, this.state.email, this.state.password);
       this.setState({
         newUser: newUser
@@ -198,7 +198,7 @@ class Signup extends Component {
             onChange={this.handleChange} />
         </FormGroup>
         <FormGroup controlId="password" bsSize="large">
-          <ControlLabel>Password</ControlLabel>
+          <ControlLabel>Password *</ControlLabel>
           <FormControl
             value={this.state.password}
             onChange={this.handleChange}
@@ -219,6 +219,10 @@ class Signup extends Component {
           isLoading={this.state.isLoading}
           text="Signup"
           loadingText="Signing up…" />
+          
+        <div className="info">
+        * >7 chars, an uppercase and a number
+        </div>
       </form>
     );
   }

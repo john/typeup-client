@@ -14,7 +14,6 @@ import LoaderButton from '../components/LoaderButton';
 import config from '../config.js';
 import './Login.css';
 
-
 class Login extends Component {
   constructor(props) {
     super(props);
