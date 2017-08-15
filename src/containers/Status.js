@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { withRouter } from 'react-router-dom';
 import { invokeApig } from '../libs/awsLib';
 import {
+  PageHeader,
   FormGroup,
   FormControl,
   ToggleButtonGroup,
@@ -98,76 +99,47 @@ class Status extends Component {
     return (
       <div className="Status">
         { this.state.status &&
-          ( <form onSubmit={this.handleSubmit}>
+          ( <div>
+            <PageHeader>
+              <span>
+                <b>
+                  Status for {this.state.status.createdAt}
+                </b>
+              </span>
+            </PageHeader>
 
+            <label>
+              Summary
+            </label>
+            <div>
+              {this.state.title}
+            </div>
+            
+            <label>
+              Blocked?
+            </label>
+            <div>
+              TK
+            </div>
+            
+            <label>
+              Description
+            </label>
+            <p>
+              {this.state.content}
+            </p>
 
-            <FormGroup controlId="title">
-              <ControlLabel>Summary</ControlLabel>
-              <FormControl
-                value={this.state.title}
-                onChange={this.handleChange}
-                componentClass="input" />
-            </FormGroup>
+            { this.state.status.attachment && (
+              <div>
+                <a target="_blank" rel="noopener noreferrer" href={ this.state.status.attachment }>
+                  { this.formatFilename(this.state.status.attachment) }
+                </a>
+              </div>
+            )}
 
-            <div className="blocked">
-              <b>Blocked?</b>&nbsp;&nbsp;&nbsp;
-              <ToggleButtonGroup type="radio" name="userState">
-                <ToggleButton value="no" className="blocked-button">
-                  No
-                </ToggleButton>
-                <ToggleButton value="yes" className="blocked-button">
-                  Yes
-                </ToggleButton>
-              </ToggleButtonGroup>
             </div>
 
-            <FormGroup controlId="content">
-              <ControlLabel>Description</ControlLabel>
-              <FormControl
-                onChange={this.handleChange}
-                value={this.state.content}
-                componentClass="textarea" />
-            </FormGroup>
-
-              { this.state.status.attachment && (
-                <FormGroup>
-                  <ControlLabel>Attachment</ControlLabel>
-                  <FormControl.Static>
-                    <a target="_blank" rel="noopener noreferrer" href={ this.state.status.attachment }>
-                      { this.formatFilename(this.state.status.attachment) }
-                    </a>
-                  </FormControl.Static>
-                </FormGroup>
-              )}
-
-              <FormGroup controlId="file">
-                { ! this.state.status.attachment &&
-                <ControlLabel>Attachment</ControlLabel> }
-                <FormControl
-                  onChange={this.handleFileChange}
-                  type="file" />
-              </FormGroup>
-
-              <LoaderButton
-                block
-                bsStyle="primary"
-                bsSize="large"
-                disabled={ ! this.validateForm() }
-                type="submit"
-                isLoading={this.state.isLoading}
-                text="Save"
-                loadingText="Saving…" />
-
-              <LoaderButton
-                block
-                bsStyle="danger"
-                bsSize="large"
-                isLoading={this.state.isDeleting}
-                onClick={this.handleDelete}
-                text="Delete"
-                loadingText="Deleting…" />
-
-            </form> )}
+            )}
         </div>
       );
   }

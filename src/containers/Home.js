@@ -18,7 +18,7 @@ class Home extends Component {
       isLoading: false,
       users: [],
       statusButtonPath: "/statuses/new",
-      statusButtonLabel: "Add status",
+      statusButtonLabel: "Add your status",
     };
   }
 
@@ -35,15 +35,13 @@ class Home extends Component {
 
       if( users.length > 0 ) {
         users.some(function(user) {
-
           if( user.userName === this.props.userName) {
             if( this.state.today === this.getDateAsString(user.last_status_createdAt)) {
               this.setState({statusButtonPath: "/statuses/edit"});
-              this.setState({statusButtonLabel: "Edit status"});
+              this.setState({statusButtonLabel: "Edit your status"});
             }
             return true;
           }
-
         }, this)
       }
     }
@@ -59,7 +57,9 @@ class Home extends Component {
   }
 
   getDateAsString(theDate) {
-    if( (typeof theDate) === 'string' ) {
+    if( typeof theDate === 'undefined' ) {
+      return '';
+    } else if( typeof theDate === 'string' ) {
       theDate = new Date(theDate);
     }
     return theDate.toJSON().slice(0,10).replace(/-/g,'/');
@@ -124,52 +124,57 @@ class Home extends Component {
 
   renderUsersList(users) {
     return users.map(function(user) {
-      if (this.state.today == this.getDateAsString(user.last_status_createdAt)) {
+      if (this.state.today === this.getDateAsString(user.last_status_createdAt)) {
         return this.renderToday(user);
       } else {
         return this.renderNotToday(user);
       }
     }, this);
   }
-
+  
   renderToday(user) {
     return (
     <ListGroupItem
       key={user.userName}
-      // href={`/users/${user.name}`}
-      // onClick={this.handleStatusClick}
       className='today'>
-
-    <h4 className="list-group-item-heading">
-      {user.name}
-    </h4>
-    <div>
-      <span className='status-date'>Today’s status: </span>
-      <a href={`/statuses/${user.last_status_id}`}>
-        {user.last_status_title}
-      </a>
-    </div>
+      <h4 className="list-group-item-heading">
+        {user.name}&nbsp;&nbsp;
+        <small>
+          timestamp
+        </small>
+      </h4>
+      <div>
+        <a href={`/statuses/${user.last_status_id}`}>
+          {user.last_status_title}
+        </a>
+        <p>
+        <small>
+          Show paperclip if there's an attachment.
+          Maybe we don't even want a status page--instead a 'more' link to reveal the description, if there is one, and the attachement opens in a different window.
+          Limit the number of characters allowed in both the summary and description, and be funny about it--this is a standup, damnit.
+          Put a pencil edit icon next to your own status for that day, and get rid of the edit utton in the header (probably want to keep the 'add' one.)
+        </small>
+        </p>
+      </div>
 
     </ListGroupItem>
     );
   }
-
+  
   renderNotToday(user) {
     return (
       <ListGroupItem
         key={user.userName}
-        //onClick={this.handleStatusClick}
         className='not-today'>
-
         <h4 className="list-group-item-heading">
           {user.name}
         </h4>
-      <div>
-        <span className='status-date'>Last status: </span>
-        <a href={`/statuses/${user.last_status_id}`}>
-          {user.last_status_title}
-        </a>
-      </div>
+        <div>
+          <span className='status-date'>Last status: </span>
+          <a href={`/statuses/${user.last_status_id}`}>
+            {user.last_status_title}
+          </a>
+        </div>
       </ListGroupItem>
     );
   }

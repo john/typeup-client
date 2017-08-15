@@ -1,5 +1,6 @@
-.Status form {
-  padding-bottom: 15px;
+.Status label {
+  padding-top: 15px;
+  color: #777;
 }
 
 .Status form textarea {
