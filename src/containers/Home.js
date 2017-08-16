@@ -35,13 +35,24 @@ class Home extends Component {
       this.setState({ users: users });
       
       if( users.length > 0 ) {
+        
+        // go through users
         users.some(function(user) {
-          if( user.userName === this.props.userName && user.last_status_title ) {
+          
+          const itsThisUser = user.userName === this.props.userName;
+          const theyHaveaStatus = user.last_status_title ;
+          
+          const inputDate = new Date(user.last_status_createdAt);
+          const todaysDate = new Date();
+          const itsFromToday = (inputDate.setHours(0,0,0,0) == todaysDate.setHours(0,0,0,0))
+          
+          if( itsThisUser && theyHaveaStatus && itsFromToday) {
             this.setState({hasStatusToday: true});
             return true;
           }
         }, this)
       }
+      
     }
     catch(e) {
       alert(e);
