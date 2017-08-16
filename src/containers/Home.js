@@ -33,26 +33,27 @@ class Home extends Component {
     try {
       const users = await this.users();
       this.setState({ users: users });
-      
+
       if( users.length > 0 ) {
-        
+
         // go through users
         users.some(function(user) {
-          
+
           const itsThisUser = user.userName === this.props.userName;
           const theyHaveaStatus = user.last_status_title ;
-          
+
           const inputDate = new Date(user.last_status_createdAt);
           const todaysDate = new Date();
-          const itsFromToday = (inputDate.setHours(0,0,0,0) == todaysDate.setHours(0,0,0,0))
-          
+          const itsFromToday = (inputDate.setHours(0,0,0,0) === todaysDate.setHours(0,0,0,0))
+
           if( itsThisUser && theyHaveaStatus && itsFromToday) {
             this.setState({hasStatusToday: true});
             return true;
           }
+          return false;
         }, this)
       }
-      
+
     }
     catch(e) {
       alert(e);
@@ -112,7 +113,7 @@ class Home extends Component {
               Team Status for <Moment format="dddd, MMMM Do">{this.state.today}</Moment>
             </b>
           </span>
-      
+
           {
           ! this.state.hasStatusToday
             ?
@@ -126,7 +127,7 @@ class Home extends Component {
             text="Add your status" />
             : null
           }
-          
+
         </PageHeader>
 
         <ListGroup>
@@ -146,13 +147,13 @@ class Home extends Component {
       }
     }, this);
   }
-  
+
   renderToday(user) {
     return (
       <StatusItem user={user} key={user.userName} />
     );
   }
-  
+
   renderNotToday(user) {
     return (
       <ListGroupItem
