@@ -49,13 +49,11 @@ class Signup extends Component {
   }
 
   handleSubmit = async (event) => {
-  //handleSubmit = (event) => {
     event.preventDefault();
 
     this.setState({ isLoading: true });
 
     try {
-      //const newUser = this.signup(this.state.name, this.state.email, this.state.password);
       const newUser = await this.signup(this.state.name, this.state.email, this.state.password);
       this.setState({
         newUser: newUser
@@ -70,7 +68,6 @@ class Signup extends Component {
 
   handleConfirmationSubmit = async (event) => {
     event.preventDefault();
-
     this.setState({ isLoading: true });
 
     try {
@@ -80,14 +77,10 @@ class Signup extends Component {
         this.state.email,
         this.state.password
       );
-
       this.props.updateUserToken(userToken);
 
-      const userParams = {userToken: userToken, userName: this.state.email, name: this.state.name, email: this.state.email }
-
-      // call createUser
+      const userParams = {userToken: userToken, userName: this.state.email, name: this.state.name, email: this.state.email };
       this.createUser(userParams);
-
       this.props.history.push('/');
     }
     catch(e) {

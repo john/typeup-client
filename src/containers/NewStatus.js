@@ -33,12 +33,12 @@ class NewStatus extends Component {
   }
 
   handleChange = (event) => {
-    if( event.target.id == 'title' && event.target.value.length > 250) {
+    if( event.target.id === 'title' && event.target.value.length > 250) {
       alert("Keep it brief please, you're not at Toastmasters.");
       return false; 
     }
     
-    if( event.target.id == 'content' && event.target.value.length > 250) {
+    if( event.target.id === 'content' && event.target.value.length > 250) {
       alert("Keep it brief please, you're not at Toastmasters.");
       return false; 
     }

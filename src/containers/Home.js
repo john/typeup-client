@@ -5,10 +5,10 @@ import { invokeApig } from '../libs/awsLib';
 import {
   PageHeader,
   ListGroup,
-  ListGroupItem,
 } from 'react-bootstrap';
 import LoaderButton from '../components/LoaderButton';
 import StatusItem from '../components/StatusItem';
+import 'moment-timezone';
 import './Home.css';
 
 class Home extends Component {
@@ -19,7 +19,7 @@ class Home extends Component {
       today: this.getDateAsString(new Date()),
       isLoading: false,
       users: [],
-      hasStatusToday: false,
+      viewerHasStatusToday: false,
     };
   }
 
@@ -31,33 +31,29 @@ class Home extends Component {
     this.setState({ isLoading: true });
 
     try {
-      const users = await this.users();
-      this.setState({ users: users });
+      const theUsers = await this.users();
+      this.setState({ users: theUsers });
       
-      if( users.length > 0 ) {
-        
-        // go through users
-        users.some(function(user) {
+      if( theUsers.length > 0 ) {
+        theUsers.some(function(user) {
           
           const itsThisUser = user.userName === this.props.userName;
           const theyHaveaStatus = user.last_status_title ;
           
           const inputDate = new Date(user.last_status_createdAt);
-          const todaysDate = new Date();
-          const itsFromToday = (inputDate.setHours(0,0,0,0) == todaysDate.setHours(0,0,0,0))
+          const itsFromToday = (inputDate.setHours(0,0,0,0) === new Date().setHours(0,0,0,0))
           
           if( itsThisUser && theyHaveaStatus && itsFromToday) {
-            this.setState({hasStatusToday: true});
+            this.setState({viewerHasStatusToday: true});
             return true;
           }
+          return false;
         }, this)
       }
-      
     }
     catch(e) {
       alert(e);
     }
-
     this.setState({ isLoading: false });
   }
 
@@ -112,9 +108,8 @@ class Home extends Component {
               Team Status for <Moment format="dddd, MMMM Do">{this.state.today}</Moment>
             </b>
           </span>
-      
           {
-          ! this.state.hasStatusToday
+          ! this.state.viewerHasStatusToday
             ?
             <LoaderButton
             bsStyle="info"
@@ -126,7 +121,6 @@ class Home extends Component {
             text="Add your status" />
             : null
           }
-          
         </PageHeader>
 
         <ListGroup>
@@ -137,38 +131,12 @@ class Home extends Component {
     );
   }
 
-  renderUsersList(users) {
-    return users.map(function(user) {
-      if (this.state.today === this.getDateAsString(user.last_status_createdAt)) {
-        return this.renderToday(user);
-      } else {
-        return this.renderNotToday(user);
-      }
+  renderUsersList(theUsers) {
+    return theUsers.map(function(user) {
+      return(
+        <StatusItem user={user} key={user.userName} today={(this.state.today === this.getDateAsString(user.last_status_createdAt)) ? 'true' : 'false'} />
+      );
     }, this);
-  }
-  
-  renderToday(user) {
-    return (
-      <StatusItem user={user} key={user.userName} />
-    );
-  }
-  
-  renderNotToday(user) {
-    return (
-      <ListGroupItem
-        key={user.userName}
-        className='not-today'>
-        <h4 className="list-group-item-heading">
-          {user.name}
-        </h4>
-        <div>
-          <span className='status-date'>Last status: </span>
-          <a href={`/statuses/${user.last_status_id}`}>
-            {user.last_status_title}
-          </a>
-        </div>
-      </ListGroupItem>
-    );
   }
 
 }

@@ -33,33 +33,32 @@ class StatusItem extends Component {
   render(user) {
     return (
     <ListGroupItem
-      className='today'>
+      className={(this.props.today === 'true') ? 'today' : 'not-today'}>
       <h4 className="list-group-item-heading">
         {this.props.user.name}&nbsp;&nbsp;
         <small>
         <Moment format="YYYY/MM/DD">{this.props.user.last_status_createdAt}</Moment>
         </small>
       </h4>
-      <div className="title">
-        {this.props.user.last_status_title}
-      </div>
-      {
-      (this.props.user.userName == this.getCurrentUser().username)
-          ?
-        <Button className="pull-right" bsStyle="info" bsSize="small">
-          <a href={this.props.user.last_status_attachment} target="_blank">
-            <Glyphicon glyph="pencil" />
-          </a>
-        </Button>
-        : null
-      }
-      
       {
         (this.props.user.last_status_attachment)
           ?
         <Button className="pull-right" bsStyle="info" bsSize="small">
           <a href={this.props.user.last_status_attachment} target="_blank">
             <Glyphicon glyph="paperclip" />
+          </a>
+        </Button>
+        : null
+      }
+      <div className="title">
+        {this.props.user.last_status_title}
+      </div>
+      {
+      ((this.props.user.userName === this.getCurrentUser().username) && (this.props.today === true))
+          ?
+        <Button className="pull-right" bsStyle="info" bsSize="small">
+          <a href={this.props.user.last_status_attachment} target="_blank">
+            <Glyphicon glyph="pencil" />
           </a>
         </Button>
         : null
