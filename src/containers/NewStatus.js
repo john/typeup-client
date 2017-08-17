@@ -21,6 +21,7 @@ class NewStatus extends Component {
     this.file = null;
     this.state = {
       isLoading: null,
+      statusId: null,
       title: '',
       userState: 'foo',
       content: '',
@@ -28,21 +29,45 @@ class NewStatus extends Component {
     };
   }
 
+  async componentDidMount() {
+    if( this.props.userToken === undefined) {
+      this.props.history.push('/login');
+    } else {
+      if( this.props.match.params && this.props.match.params.statusId ) {
+        const statusId = this.props.match.params.statusId;
+        try {
+          const results = await this.getStatus(statusId);
+          this.setState({
+            statusId: statusId,
+            content: results.content,
+            title: results.title,
+            userState: results.userState,
+          });
+        } catch(e) {
+          alert(e);
+        }
+      } else {
+        console.log('couldn not find params');
+      }
+    }
+  }
+
+  // TODO: share, used in both Status.js and NewStatus.js (which should be renamed)
+  getStatus(statusId) {
+    return invokeApig({ path: `/statuses/${statusId}` }, this.props.userToken);
+  }
+
   validateForm() {
     return this.state.title.length > 0;
   }
 
   handleChange = (event) => {
-    if( event.target.id === 'title' && event.target.value.length > 250) {
+    var targetId = event.target.id;
+    if( (targetId === 'title' || targetId === 'content') && event.target.value.length > 250) {
       alert("Keep it brief please, you're not at Toastmasters.");
-      return false; 
+      return false;
     }
-    
-    if( event.target.id === 'content' && event.target.value.length > 250) {
-      alert("Keep it brief please, you're not at Toastmasters.");
-      return false; 
-    }
-    
+
     this.setState({ [event.target.id]: event.target.value });
   }
 
@@ -65,14 +90,13 @@ class NewStatus extends Component {
       const uploadedFilename = (this.file)
         ? (await s3Upload(this.file, this.props.userToken)).Location
         : null;
-
-      await this.createStatus({
-        userName: this.props.currentUserName,
-        title: this.state.title,
-        content: this.state.content,
-        userState: this.state.userState,
-        attachment: uploadedFilename,
-      });
+        await this.createStatus({
+          userName: this.props.currentUserName,
+          title: this.state.title,
+          content: this.state.content,
+          userState: this.state.userState,
+          attachment: uploadedFilename,
+        });
       this.props.history.push('/');
     }
     catch(e) {
@@ -117,12 +141,12 @@ class NewStatus extends Component {
                 Attach file <Glyphicon glyph="paperclip" />
               </div>
             </ControlLabel>
-              
+
             <FormControl
               onChange={this.handleFileChange}
               className="upload"
               type="file" />
-              
+
             {
             this.state.hasFileAttached
               ?
@@ -130,7 +154,7 @@ class NewStatus extends Component {
               : null
             }
           </FormGroup>
-              
+
           <LoaderButton
             block
             bsStyle="primary"

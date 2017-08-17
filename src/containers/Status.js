@@ -42,6 +42,7 @@ class Status extends Component {
     }
   }
 
+  // TODO: reshare, used in both Status.js and NewStatus.js (which should be renamed)
   getStatus() {
     return invokeApig({ path: `/statuses/${this.props.match.params.statusId}` }, this.props.userToken);
   }
@@ -108,14 +109,14 @@ class Status extends Component {
             <div>
               {this.state.title}
             </div>
-            
+
             <label>
               Blocked?
             </label>
             <div>
               TK
             </div>
-            
+
             <label>
               Description
             </label>

@@ -31,18 +31,18 @@ class Home extends Component {
     this.setState({ isLoading: true });
 
     try {
+
       const theUsers = await this.users();
       this.setState({ users: theUsers });
       
       if( theUsers.length > 0 ) {
         theUsers.some(function(user) {
-          
           const itsThisUser = user.userName === this.props.userName;
           const theyHaveaStatus = user.last_status_title ;
-          
+
           const inputDate = new Date(user.last_status_createdAt);
           const itsFromToday = (inputDate.setHours(0,0,0,0) === new Date().setHours(0,0,0,0))
-          
+
           if( itsThisUser && theyHaveaStatus && itsFromToday) {
             this.setState({viewerHasStatusToday: true});
             return true;
@@ -138,7 +138,6 @@ class Home extends Component {
       );
     }, this);
   }
-
 }
 
 export default withRouter(Home);

@@ -17,11 +17,11 @@ class StatusItem extends Component {
       showDescription: false,
     };
   }
-  
+
   toggle() {
     this.setState({showDescription: !this.state.showDescription});
   }
-  
+
   getCurrentUser() {
     const userPool = new CognitoUserPool({
       UserPoolId: config.cognito.USER_POOL_ID,
@@ -37,7 +37,7 @@ class StatusItem extends Component {
       <h4 className="list-group-item-heading">
         {this.props.user.name}&nbsp;&nbsp;
         <small>
-        <Moment format="YYYY/MM/DD">{this.props.user.last_status_createdAt}</Moment>
+        <Moment format="YYYY/MM/DD"parse="YYYY-MM-DD">{this.props.user.last_status_createdAt}</Moment>
         </small>
       </h4>
       {
@@ -68,7 +68,7 @@ class StatusItem extends Component {
           ?
         <More description={this.props.user.last_status_content} />
           : null
-      }  
+      }
     </ListGroupItem>
     );
   }
