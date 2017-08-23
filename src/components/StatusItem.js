@@ -35,9 +35,14 @@ class StatusItem extends Component {
     <ListGroupItem
       className={(this.props.today === 'true') ? 'today' : 'not-today'}>
       <h4 className="list-group-item-heading">
-        {this.props.user.name}&nbsp;&nbsp;
+        <a href={"/users/" + this.props.user.email}>{this.props.user.name} ({this.props.user.email})</a>&nbsp;&nbsp;
         <small>
-        <Moment format="YYYY/MM/DD"parse="YYYY-MM-DD">{this.props.user.last_status_createdAt}</Moment>
+        {
+          (this.props.user.last_status_createdAt)
+            ?
+          <Moment format="YYYY/MM/DD"parse="YYYY-MM-DD">{this.props.user.last_status_createdAt}</Moment>
+          : "Hasn't submitted a status yet."
+        }
         </small>
       </h4>
       {

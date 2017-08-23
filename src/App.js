@@ -9,20 +9,21 @@ import {
   Navbar
 } from 'react-bootstrap';
 import AWS from 'aws-sdk';
+import { invokeApig } from './libs/awsLib';
 import Routes from './Routes';
 import RouteNavItem from './components/RouteNavItem';
 import { CognitoUserPool, } from 'amazon-cognito-identity-js';
 import config from './config.js';
 import './App.css';
 
-
 class App extends Component {
   constructor(props) {
     super(props);
-
+    
     this.state = {
       userToken: null,
       userName: null,
+      userFullname: null,
       isLoadingUserToken: true,
     };
   }
@@ -39,14 +40,25 @@ class App extends Component {
       const userToken = await this.getUserToken(currentUser);
       this.updateUserToken(userToken);
       this.setState({userName: this.getCurrentUser().username});
+      
+      //const user = await this.getUser(userToken, userName);
+      // this.setState({userFullname: user.name});
     }
+    
     catch(e) {
       alert(e);
     }
-
+    
     this.setState({isLoadingUserToken: false});
   }
-
+  
+  // // TODO: reshare, used in both Status.js and NewStatus.js (which should be renamed)
+  // getUser(userToken, userName) {
+  //   alert('userName is: ' + userName);
+  //   // return invokeApig({ path: `/users/${this.state.userName}` }, userToken);
+  //   return invokeApig({ path: `/users/${userName}` }, userToken);
+  // }
+  
   getCurrentUser() {
     const userPool = new CognitoUserPool({
       UserPoolId: config.cognito.USER_POOL_ID,
@@ -100,6 +112,7 @@ class App extends Component {
       updateUserToken: this.updateUserToken,
     }
 
+    // get userName to NewStatus so user can be updated with latest status info
     if( this.state.userToken ) {
       childProps.currentUserName = this.state.userName;
     }

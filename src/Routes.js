@@ -7,6 +7,7 @@ import AppliedRoute from './components/AppliedRoute';
 import Home from './containers/Home';
 import NewStatus from './containers/NewStatus';
 import Status from './containers/Status';
+import User from './containers/User';
 
 export default ({ childProps }) => (
   <Switch>
@@ -16,6 +17,7 @@ export default ({ childProps }) => (
     <AppliedRoute path="/statuses/new" exact component={NewStatus} props={childProps} />
     <AppliedRoute path="/statuses/:statusId/edit" exact component={NewStatus} props={childProps} />
     <AppliedRoute path="/statuses/:statusId" exact component={Status} props={childProps} />
+    <AppliedRoute path="/users/:userName" exact component={User} props={childProps} />
     <Route component={NotFound} />
   </Switch>
 );
