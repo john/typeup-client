@@ -34,7 +34,7 @@ class Home extends Component {
 
       const theUsers = await this.users();
       this.setState({ users: theUsers });
-      
+
       if( theUsers.length > 0 ) {
         theUsers.some(function(user) {
           const itsThisUser = user.userName === this.props.userName;
@@ -99,6 +99,20 @@ class Home extends Component {
     );
   }
 
+  // this had gone before end of PageHeader:
+  // {
+  // ! this.state.viewerHasStatusToday
+  //   ?
+  //   <LoaderButton
+  //   bsStyle="info"
+  //   bsSize="small"
+  //   className="pullRight"
+  //   isLoading={this.state.isDeleting}
+  //   href="/statuses/new"
+  //   onClick={this.handleStatusClick}
+  //   text="Add your status" />
+  //   : null
+  // }
   renderUsers() {
     return (
       <div className="users">
@@ -108,19 +122,6 @@ class Home extends Component {
               Team Status for <Moment format="dddd, MMMM Do">{this.state.today}</Moment>
             </b>
           </span>
-          {
-          ! this.state.viewerHasStatusToday
-            ?
-            <LoaderButton
-            bsStyle="info"
-            bsSize="small"
-            className="pullRight"
-            isLoading={this.state.isDeleting}
-            href="/statuses/new"
-            onClick={this.handleStatusClick}
-            text="Add your status" />
-            : null
-          }
         </PageHeader>
 
         <ListGroup>
@@ -134,7 +135,7 @@ class Home extends Component {
   renderUsersList(theUsers) {
     return theUsers.map(function(user) {
       return(
-        <StatusItem user={user} key={user.userName} today={(this.state.today === this.getDateAsString(user.last_status_createdAt)) ? 'true' : 'false'} />
+        <StatusItem user={user} key={user.userName} hasSubmittedStatus={(this.state.today === this.getDateAsString(user.last_status_createdAt)) ? 'true' : 'false'} />
       );
     }, this);
   }

@@ -40,9 +40,9 @@ class User extends Component {
 
   // TODO: reshare, used in both Status.js and NewStatus.js (which should be renamed)
   getUser() {
-    return invokeApig({ path: `/users/${encodeURIComponent(this.props.match.params.userName)}` }, this.props.userToken);
+    return invokeApig({ path: `/users/${this.props.match.params.userId}` }, this.props.userToken);
   }
-  
+
   render() {
     return (
       <div className="User">
@@ -60,7 +60,7 @@ class User extends Component {
       }
       </div>
     );
-  } 
+  }
 }
 
 export default withRouter(User);

@@ -35,7 +35,7 @@ class StatusItem extends Component {
     <ListGroupItem
       className={(this.props.today === 'true') ? 'today' : 'not-today'}>
       <h4 className="list-group-item-heading">
-        <a href={"/users/" + this.props.user.email}>{this.props.user.name} ({this.props.user.email})</a>&nbsp;&nbsp;
+        <a href={"/users/" + this.props.user.userId}>{this.props.user.name} ({this.props.user.userId})</a>&nbsp;&nbsp;
         <small>
         {
           (this.props.user.last_status_createdAt)
@@ -58,16 +58,28 @@ class StatusItem extends Component {
       <div className="title">
         {this.props.user.last_status_title}
       </div>
+
       {
-      ((this.props.user.userName === this.getCurrentUser().username) && (this.props.today === true))
+      (this.props.user.userName === this.getCurrentUser().username)
+        ?
+        (this.props.hasSubmittedStatus === true)
           ?
-        <Button className="pull-right" bsStyle="info" bsSize="small">
-          <a href={this.props.user.last_status_attachment} target="_blank">
-            <Glyphicon glyph="pencil" />
-          </a>
-        </Button>
+            <Button className="pull-right" bsStyle="info" bsSize="small">
+              <a href="/users/:userId/statuses/:statusId/edit" >
+                EDIT <Glyphicon glyph="pencil" />
+              </a>
+            </Button>
+
+
+          :
+            <Button className="pull-right" bsStyle="info" bsSize="small">
+              <a href={"/users/" + this.props.user.userId + "/statuses/new"}>
+                ADD <Glyphicon glyph="pencil" />
+              </a>
+            </Button>
         : null
       }
+
       {
         this.props.user.last_status_content
           ?

@@ -117,7 +117,7 @@ class NewStatus extends Component {
     return (
       <div className="NewStatus">
         <form onSubmit={this.handleSubmit}>
-          <input type="hidden" id="userName" value={this.props.currentUserName} />
+          <input type="hidden" id="userId" value={this.props.match.params.userId} />
           <FormGroup controlId="title">
             <ControlLabel>Your status</ControlLabel>
             <FormControl

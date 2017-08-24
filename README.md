@@ -8,7 +8,7 @@ This is the front end React client to all the TypeUp APIs demos. All of the demo
 
 ### TODO:
 
-- When you first sign up and Home.js loads, it's not getting users.
+- When you first sign up and Home.js loads, it's not getting users (or at least not showing you right after you sign up)
 
 #### Features:
 
