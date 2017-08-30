@@ -6,7 +6,6 @@ import {
   PageHeader,
   ListGroup,
 } from 'react-bootstrap';
-import LoaderButton from '../components/LoaderButton';
 import StatusItem from '../components/StatusItem';
 import 'moment-timezone';
 import './Home.css';
@@ -23,6 +22,13 @@ class Home extends Component {
     };
   }
 
+  // async componentWillReceiveProps() {
+  //   const theUsers = await this.users();
+  //
+  //   console.log('about to set state in willRecieveProps <-----------------');
+  //   this.setState({ users: theUsers });
+  // }
+
   async componentDidMount() {
     if (this.props.userToken === null) {
       return;
@@ -31,13 +37,15 @@ class Home extends Component {
     this.setState({ isLoading: true });
 
     try {
-
+      // var theUsers = await this.users();
       const theUsers = await this.users();
+      console.log('about to set state in didMount. theUsers.length is: ' + theUsers.length + ' <-----------------');
+
       this.setState({ users: theUsers });
 
       if( theUsers.length > 0 ) {
         theUsers.some(function(user) {
-          const itsThisUser = user.userName === this.props.userName;
+          const itsThisUser = user.userId === this.props.userId;
           const theyHaveaStatus = user.last_status_title ;
 
           const inputDate = new Date(user.last_status_createdAt);
@@ -99,20 +107,6 @@ class Home extends Component {
     );
   }
 
-  // this had gone before end of PageHeader:
-  // {
-  // ! this.state.viewerHasStatusToday
-  //   ?
-  //   <LoaderButton
-  //   bsStyle="info"
-  //   bsSize="small"
-  //   className="pullRight"
-  //   isLoading={this.state.isDeleting}
-  //   href="/statuses/new"
-  //   onClick={this.handleStatusClick}
-  //   text="Add your status" />
-  //   : null
-  // }
   renderUsers() {
     return (
       <div className="users">
@@ -135,7 +129,17 @@ class Home extends Component {
   renderUsersList(theUsers) {
     return theUsers.map(function(user) {
       return(
-        <StatusItem user={user} key={user.userName} hasSubmittedStatus={(this.state.today === this.getDateAsString(user.last_status_createdAt)) ? 'true' : 'false'} />
+        <StatusItem
+          user={user}
+          userFullName={user.name}
+          userName={user.email}
+          userId={user.userId}
+          statusId={user.lastStatusId}
+          createdAt={user.lastStatusCreatedAt}
+          title={user.lastStatusTitle}
+          content={user.lastStatusContent}
+          key={user.userId}
+          hasSubmittedStatus={(this.state.today === this.getDateAsString(user.lastStatusCreatedAt)) ? 'true' : 'false'} />
       );
     }, this);
   }

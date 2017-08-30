@@ -82,6 +82,7 @@ class Signup extends Component {
       const userParams = {userToken: userToken, userName: this.state.email, name: this.state.name, email: this.state.email };
       this.createUser(userParams);
       this.props.history.push('/');
+      // window.location.reload();
     }
     catch(e) {
       alert(e);
@@ -212,7 +213,7 @@ class Signup extends Component {
           isLoading={this.state.isLoading}
           text="Signup"
           loadingText="Signing up…" />
-          
+
         <div className="info">
         * >7 chars, an uppercase and a number
         </div>

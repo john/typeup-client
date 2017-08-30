@@ -4,10 +4,10 @@ import { invokeApig, s3Upload } from '../libs/awsLib';
 import {
   FormGroup,
   FormControl,
-  ToggleButtonGroup,
-  ToggleButton,
+//  ToggleButtonGroup,
+//  ToggleButton,
   ControlLabel,
-  Button,
+//  Button,
   Glyphicon,
 } from 'react-bootstrap';
 import LoaderButton from '../components/LoaderButton';
@@ -22,6 +22,7 @@ class NewStatus extends Component {
     this.state = {
       isLoading: null,
       statusId: null,
+      userId: this.props.match.params.userId,
       title: '',
       userState: 'foo',
       content: '',
@@ -46,8 +47,6 @@ class NewStatus extends Component {
         } catch(e) {
           alert(e);
         }
-      } else {
-        console.log('couldn not find params');
       }
     }
   }
@@ -91,7 +90,7 @@ class NewStatus extends Component {
         ? (await s3Upload(this.file, this.props.userToken)).Location
         : null;
         await this.createStatus({
-          userName: this.props.currentUserName,
+          userId: this.state.userId,
           title: this.state.title,
           content: this.state.content,
           userState: this.state.userState,

@@ -4,7 +4,7 @@ import { invokeApig } from '../libs/awsLib';
 import {
   PageHeader,
 } from 'react-bootstrap';
-import config from '../config.js';
+import UserStatuses from './UserStatuses';
 
 class User extends Component {
   constructor(props) {
@@ -16,9 +16,6 @@ class User extends Component {
       isLoading: null,
       isDeleting: null,
       user: null,
-      //title: '',
-      //userState: '',
-      //content: '',
     };
   }
 
@@ -55,6 +52,7 @@ class User extends Component {
               </b>
             </span>
           </PageHeader>
+          <UserStatuses user={this.state.user} userToken={this.props.userToken} />
           </div>
         )
       }

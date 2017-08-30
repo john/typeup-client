@@ -9,7 +9,6 @@ import {
   Navbar
 } from 'react-bootstrap';
 import AWS from 'aws-sdk';
-import { invokeApig } from './libs/awsLib';
 import Routes from './Routes';
 import RouteNavItem from './components/RouteNavItem';
 import { CognitoUserPool, } from 'amazon-cognito-identity-js';

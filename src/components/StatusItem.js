@@ -33,57 +33,55 @@ class StatusItem extends Component {
   render(user) {
     return (
     <ListGroupItem
-      className={(this.props.today === 'true') ? 'today' : 'not-today'}>
-      <h4 className="list-group-item-heading">
-        <a href={"/users/" + this.props.user.userId}>{this.props.user.name} ({this.props.user.userId})</a>&nbsp;&nbsp;
-        <small>
-        {
-          (this.props.user.last_status_createdAt)
-            ?
-          <Moment format="YYYY/MM/DD"parse="YYYY-MM-DD">{this.props.user.last_status_createdAt}</Moment>
-          : "Hasn't submitted a status yet."
-        }
-        </small>
-      </h4>
+      className={(this.props.hasSubmittedStatus === 'true') ? 'today' : 'not-today'}>
+
       {
-        (this.props.user.last_status_attachment)
+        (this.props.user.lastStatusAttachment)
           ?
         <Button className="pull-right" bsStyle="info" bsSize="small">
-          <a href={this.props.user.last_status_attachment} target="_blank">
+          <a href={this.props.user.lastStatusAttachment} target="_blank">
             <Glyphicon glyph="paperclip" />
           </a>
         </Button>
         : null
       }
-      <div className="title">
-        {this.props.user.last_status_title}
-      </div>
-
       {
-      (this.props.user.userName === this.getCurrentUser().username)
+      (this.props.userName === this.getCurrentUser().username)
         ?
-        (this.props.hasSubmittedStatus === true)
+        (this.props.hasSubmittedStatus === 'true')
           ?
             <Button className="pull-right" bsStyle="info" bsSize="small">
-              <a href="/users/:userId/statuses/:statusId/edit" >
-                EDIT <Glyphicon glyph="pencil" />
+              <a href={"/users/" + this.props.userId + "/statuses/" + this.props.user.lastStatusId + "/edit"}>
+                Edit <Glyphicon glyph="pencil" />
               </a>
             </Button>
-
-
           :
             <Button className="pull-right" bsStyle="info" bsSize="small">
-              <a href={"/users/" + this.props.user.userId + "/statuses/new"}>
-                ADD <Glyphicon glyph="pencil" />
+              <a href={"/users/" + this.props.userId + "/statuses/new"}>
+                Add status for today <Glyphicon glyph="pencil" />
               </a>
             </Button>
         : null
       }
+      <h4 className="list-group-item-heading">
+        <a href={"/users/" + this.props.userId}>{this.props.userFullName}</a>&nbsp;&nbsp;
+        <small>
+        {
+          (this.props.createdAt)
+            ?
+          <Moment format="YYYY/MM/DD"parse="YYYY-MM-DD">{this.props.createdAt}</Moment>
+          : "Hasn't submitted a status yet."
+        }
+        </small>
+      </h4>
 
+      <div className="title">
+        {this.props.title}
+      </div>
       {
-        this.props.user.last_status_content
+        this.props.content
           ?
-        <More description={this.props.user.last_status_content} />
+        <More description={this.props.content} />
           : null
       }
     </ListGroupItem>
