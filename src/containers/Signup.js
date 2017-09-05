@@ -86,6 +86,9 @@ class Signup extends Component {
     }
     catch(e) {
       alert(e);
+	  
+	  // rollback user creation in Cognito, otherwise it creates an orphan user and you can't try again, because the email has been used.
+	  // OR, create a user
       this.setState({ isLoading: false });
     }
   }
@@ -98,7 +101,7 @@ class Signup extends Component {
     }, this.props.userToken);
   }
 
-  signup(name, email, password) {
+  getCognito(name, email) {
     const userPool = new CognitoUserPool({
       UserPoolId: config.cognito.USER_POOL_ID,
       ClientId: config.cognito.APP_CLIENT_ID
@@ -109,7 +112,22 @@ class Signup extends Component {
     var attributePhoneNumber = new CognitoUserAttribute({Name: 'name', Value: name});
     attributeList.push(attributeEmail);
     attributeList.push(attributePhoneNumber);
-
+    
+    return {userPool: userPool, attributeList: attributeList};
+  }
+  
+  // extract code to set up userPool from 'signup', and share between functions
+  rollback(name, email, password) {
+  	const cog = this.getCognito(name, email);
+    const userPool = cog.userPool;
+    const attributeList = cog.attributeList
+  }
+  
+  signup(name, email, password) {
+    const cog = this.getCognito(name, email, password);
+    const userPool = cog.userPool;
+    const attributeList = cog.attributeList
+    
     return new Promise((resolve, reject) => (
       userPool.signUp(email, password, attributeList, null, (err, result) => {
         if (err) {
