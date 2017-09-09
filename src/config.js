@@ -1,7 +1,7 @@
 export default {
   MAX_ATTACHMENT_SIZE: 5000000,
   apiGateway: {
-    URL: 'https://92xlu11lsj.execute-api.us-west-2.amazonaws.com/prod',
+    URL: 'https://loicow7rba.execute-api.us-west-2.amazonaws.com/prod',
     REGION: 'us-west-2',
 	ENV: 'prod'
   },

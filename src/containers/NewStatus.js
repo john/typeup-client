@@ -4,12 +4,13 @@ import { invokeApig, s3Upload } from '../libs/awsLib';
 import {
   FormGroup,
   FormControl,
-//  ToggleButtonGroup,
-//  ToggleButton,
+  // ToggleButtonGroup,
+  // ToggleButton,
   ControlLabel,
-//  Button,
+  Radio,
   Glyphicon,
 } from 'react-bootstrap';
+
 import LoaderButton from '../components/LoaderButton';
 import config from '../config.js';
 import './NewStatus.css';
@@ -24,7 +25,7 @@ class NewStatus extends Component {
       statusId: null,
       userId: this.props.match.params.userId,
       title: '',
-      userState: 'foo',
+      userState: 'false',
       content: '',
       hasFileAttached: false,
     };
@@ -62,12 +63,21 @@ class NewStatus extends Component {
 
   handleChange = (event) => {
     var targetId = event.target.id;
-    if( (targetId === 'title' || targetId === 'content') && event.target.value.length > 250) {
+    if(targetId === 'title' && event.target.value.length > 139) {
+      alert("If you really need to say more, put it in details.");
+      return false;
+    }
+    
+    if(targetId === 'content' && event.target.value.length > 499) {
       alert("Keep it brief please, you're not at Toastmasters.");
       return false;
     }
 
     this.setState({ [event.target.id]: event.target.value });
+  }
+  
+  handleUserState = (event) => {
+    this.setState({ userState: event.target.value });
   }
 
   handleFileChange = (event) => {
@@ -117,13 +127,18 @@ class NewStatus extends Component {
       <div className="NewStatus">
         <form onSubmit={this.handleSubmit}>
           <input type="hidden" id="userId" value={this.props.match.params.userId} />
+      
           <FormGroup controlId="title">
             <ControlLabel>Your status</ControlLabel>
             <FormControl
               autoFocus
               value={this.state.title}
               onChange={this.handleChange}
+              maxLength={140}
               componentClass="textarea" />
+            <div className="counter">
+               {this.state.title.length}/140
+            </div>
           </FormGroup>
 
           <FormGroup controlId="content">
@@ -131,8 +146,31 @@ class NewStatus extends Component {
             <FormControl
               onChange={this.handleChange}
               value={this.state.content}
+              maxLength={500}
               componentClass="textarea" />
+            <div className="counter">
+               {this.state.content.length}/500
+            </div>
           </FormGroup>
+              
+          <div className="blocked">
+            <ControlLabel>Blocked?&nbsp;&nbsp;&nbsp;</ControlLabel>
+            
+            
+                <input type="radio" name="userState" 
+                                   value="false"
+                                   checked={this.state.userState == 'false'}
+                                   onChange={this.handleUserState} />
+                                   &nbsp;
+                                   No
+                                   &nbsp;&nbsp;&nbsp;
+                <input type="radio" name="userState" 
+                                   value="true"
+                                   checked={this.state.userState == 'true'}
+                                   onChange={this.handleUserState} />
+                                   &nbsp;
+                                   Yes
+          </div>
 
           <FormGroup controlId="file">
             <ControlLabel>

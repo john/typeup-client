@@ -98,7 +98,7 @@ class Home extends Component {
   renderLander() {
     return (
       <div className="lander">
-        <h1>PostUp</h1>
+        <h1>TypeUp</h1>
         <p>Sit down, PostUp.</p>
       </div>
     );
@@ -131,6 +131,7 @@ class Home extends Component {
           userFullName={user.name}
           userName={user.email}
           userId={user.userId}
+          userState={user.lastStatusUserState}
           statusId={user.lastStatusId}
           createdAt={user.lastStatusCreatedAt}
           title={user.lastStatusTitle}

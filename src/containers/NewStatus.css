@@ -21,9 +21,14 @@
 	z-index: -1;
 }
 
-/*.blocked-button {
-  padding: 5px 50px;
-}*/
+.NewStatus .counter {
+  color: #777;
+  font-size: 13px;
+}
+
+.NewStatus .blocked {
+  padding: 10px 0 20px 0;
+}
 
 label {
   color: #777;

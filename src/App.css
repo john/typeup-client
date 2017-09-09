@@ -13,3 +13,7 @@
 .not-today {
   background-color: #FADBD8;
 }
+
+.userFullName {
+  padding-right: 10px;
+}

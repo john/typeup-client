@@ -34,17 +34,6 @@ class StatusItem extends Component {
     return (
     <ListGroupItem
       className={(this.props.hasSubmittedStatus === 'true') ? 'today' : 'not-today'}>
-
-      {
-        (this.props.user.lastStatusAttachment)
-          ?
-        <Button className="pull-right" bsStyle="info" bsSize="small">
-          <a href={this.props.user.lastStatusAttachment} target="_blank">
-            <Glyphicon glyph="paperclip" />
-          </a>
-        </Button>
-        : null
-      }
       {
       (this.props.userName === this.getCurrentUser().username)
         ?
@@ -64,7 +53,10 @@ class StatusItem extends Component {
         : null
       }
       <h4 className="list-group-item-heading">
-        <a href={"/users/" + this.props.userId}>{this.props.userFullName}</a>&nbsp;&nbsp;
+        <a className="userFullName" href={"/users/" + this.props.userId}>
+          {this.props.userFullName}
+        </a>
+        
         <small>
         {
           (this.props.createdAt)
@@ -73,9 +65,18 @@ class StatusItem extends Component {
           : "Hasn't submitted a status yet."
         }
         </small>
+        
+        {
+          this.props.createdAt && this.props.userState === 'true'
+            ?
+          <Button className="btn blocked" bsStyle="danger" bsSize="small">BLOCKED</Button>
+            :
+          null
+        }
+        
       </h4>
 
-      <div className="title">
+      <div className="counter">
         {this.props.title}
       </div>
       {
@@ -83,6 +84,16 @@ class StatusItem extends Component {
           ?
         <More description={this.props.content} />
           : null
+      }
+      {
+        (this.props.user.lastStatusAttachment)
+          ?
+        <Button className="attachment-btn" bsStyle="info" bsSize="small">
+          <a href={this.props.user.lastStatusAttachment} target="_blank">
+            <Glyphicon glyph="paperclip" />
+          </a>
+        </Button>
+        : null
       }
     </ListGroupItem>
     );
