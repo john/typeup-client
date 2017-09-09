@@ -21,13 +21,13 @@ class Home extends Component {
       viewerHasStatusToday: false,
     };
   }
-
-  // async componentWillReceiveProps() {
-  //   const theUsers = await this.users();
-  //
-  //   console.log('about to set state in willRecieveProps <-----------------');
-  //   this.setState({ users: theUsers });
-  // }
+  
+  // from https://medium.com/front-end-hacking/async-await-with-react-lifecycle-methods-802e7760d802
+  setStateAsync(state) {
+    return new Promise((resolve) => {
+      this.setState(state, resolve)
+    });
+  }
 
   async componentDidMount() {
     if (this.props.userToken === null) {
@@ -37,11 +37,8 @@ class Home extends Component {
     this.setState({ isLoading: true });
 
     try {
-      // var theUsers = await this.users();
       const theUsers = await this.users();
-      console.log('about to set state in didMount. theUsers.length is: ' + theUsers.length + ' <-----------------');
-
-      this.setState({ users: theUsers });
+      await this.setStateAsync({users: theUsers });
 
       if( theUsers.length > 0 ) {
         theUsers.some(function(user) {
