@@ -110,7 +110,7 @@ class Home extends Component {
         <PageHeader>
           <span>
             <b>
-              Team Status for <Moment format="dddd, MMMM Do">{this.state.today}</Moment>
+              Team Status for <Moment format="dddd, MMMM Do" parse="YYYY-MM-DD">{this.state.today}</Moment>
             </b>
           </span>
         </PageHeader>

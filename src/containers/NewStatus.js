@@ -4,10 +4,7 @@ import { invokeApig, s3Upload } from '../libs/awsLib';
 import {
   FormGroup,
   FormControl,
-  // ToggleButtonGroup,
-  // ToggleButton,
   ControlLabel,
-  Radio,
   Glyphicon,
 } from 'react-bootstrap';
 
@@ -41,7 +38,7 @@ class NewStatus extends Component {
           const results = await this.getStatus(statusId);
           this.setState({
             statusId: statusId,
-            content: results.content,
+            content: results.content ? results.content : '',
             title: results.title,
             userState: results.userState,
           });
@@ -94,7 +91,7 @@ class NewStatus extends Component {
     }
 
     this.setState({ isLoading: true });
-
+    
     try {
       const uploadedFilename = (this.file)
         ? (await s3Upload(this.file, this.props.userToken)).Location
@@ -102,7 +99,7 @@ class NewStatus extends Component {
         await this.createStatus({
           userId: this.state.userId,
           title: this.state.title,
-          content: this.state.content,
+          content: this.state.content ? this.state.content : '',
           userState: this.state.userState,
           attachment: uploadedFilename,
         });
@@ -159,14 +156,14 @@ class NewStatus extends Component {
             
                 <input type="radio" name="userState" 
                                    value="false"
-                                   checked={this.state.userState == 'false'}
+                                   checked={this.state.userState === 'false'}
                                    onChange={this.handleUserState} />
                                    &nbsp;
                                    No
                                    &nbsp;&nbsp;&nbsp;
                 <input type="radio" name="userState" 
                                    value="true"
-                                   checked={this.state.userState == 'true'}
+                                   checked={this.state.userState === 'true'}
                                    onChange={this.handleUserState} />
                                    &nbsp;
                                    Yes

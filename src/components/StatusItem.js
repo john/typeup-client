@@ -61,7 +61,7 @@ class StatusItem extends Component {
         {
           (this.props.createdAt)
             ?
-          <Moment format="YYYY/MM/DD"parse="YYYY-MM-DD">{this.props.createdAt}</Moment>
+          <Moment format="YYYY/MM/DD" parse="YYYY-MM-DD">{this.props.createdAt}</Moment>
           : "Hasn't submitted a status yet."
         }
         </small>
