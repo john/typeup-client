@@ -10,7 +10,18 @@ This is the front end client, written in React, to the AWS Startup Kit TypeUp ap
 - Run the app locally: `npm start`
 
 ### Configuration
-- You need to get the base URL of your API Gateway and put it in config.js. Instructions for deploying the demo APIs can be found in their respective repos ([Serverless](https://github.com/john/typeup-api-serverless)), the README for each API has instructions for finding the API Gateway URL once deployed. In addition to the API Gateway, you'll need to [create a Cognito User Pool](https://docs.aws.amazon.com/cognito/latest/developerguide/create-new-user-pool-console-quickstart.html) for auth, and an S3 bucket for file uploads.
+- Create a [Cognito User Pool](https://docs.aws.amazon.com/cognito/latest/developerguide/create-new-user-pool-console-quickstart.html). You can change the defaults to suit your needs, but accepting the defaults will work. Edit config.js to fill in REGION and USER_POOL_ID
+
+- In the 'general settings' area of your user pool, click 'add app client'. Unclick "generate client secret," as they're not supported by the Javascript SDK. Check "Enable sign-in API." Finish, then get the APP_CLIENT_ID and add to config.js
+
+- Create an [Identity Pool](https://docs.aws.amazon.com/cognito/latest/developerguide/identity-pools.html). In the 'Authentication providers' section, enter the user pool ID and app client id from the previous step, then click 'Create pool.'
+
+- On next page click 'Show details,' and enter policy info from: https://serverless-stack.com/chapters/create-a-cognito-identity-pool.html
+
+- When prompted, let cognito create a new role for the identitypool. When done, click 'Sample code' in the left nav, copy the Identity pool ID from the code samples, and add it to config.js
+
+- You need to get the base URL of your API Gateway and put that in config.js as well. Instructions for deploying the demo APIs can be found in their respective repos ([Serverless](https://github.com/john/typeup-api-serverless)), the README for each API has instructions for finding the API Gateway URL once deployed.
+- Deploying the API creates an S3 bucket for file uploads. After deploying get the name of the bucket, and add it to the client's config.js
 
 ### Deploying remotely
 - Package the app for production: `npm run build`
